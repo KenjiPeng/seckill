@@ -14,4 +14,5 @@ public interface SeckillUserRepository {
      * @return
      */
     SeckillUser getSeckillUserByUserName(String userName);
+
 }

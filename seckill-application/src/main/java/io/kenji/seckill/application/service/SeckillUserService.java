@@ -16,4 +16,6 @@ public interface SeckillUserService {
     SeckillUser getSeckillUserByUserName(String userName);
 
     String login(String userName,String password);
+
+    SeckillUser getSeckillUserByUserId(Long userId);
 }

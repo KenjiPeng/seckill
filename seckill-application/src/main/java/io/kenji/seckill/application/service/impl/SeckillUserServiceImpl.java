@@ -1,12 +1,12 @@
 package io.kenji.seckill.application.service.impl;
 
 import io.kenji.seckill.application.service.RedisService;
+import io.kenji.seckill.application.service.SeckillUserService;
 import io.kenji.seckill.domain.code.HttpCode;
 import io.kenji.seckill.domain.constants.SeckillConstants;
 import io.kenji.seckill.domain.exception.SeckillException;
 import io.kenji.seckill.domain.model.SeckillUser;
 import io.kenji.seckill.domain.respository.SeckillUserRepository;
-import io.kenji.seckill.application.service.SeckillUserService;
 import io.kenji.seckill.infrastructure.shiro.utils.CommonsUtils;
 import io.kenji.seckill.infrastructure.shiro.utils.JwtUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,5 +61,15 @@ public class SeckillUserServiceImpl implements SeckillUserService {
         String key = SeckillConstants.getKey(SeckillConstants.USER_KEY_PREFIX, String.valueOf(seckillUser.getId()));
         redisService.set(key, seckillUser);
         return token;
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    @Override
+    public SeckillUser getSeckillUserByUserId(Long userId) {
+        String key = SeckillConstants.getKey(SeckillConstants.USER_KEY_PREFIX, String.valueOf(userId));
+       return (SeckillUser) redisService.get(key);
     }
 }

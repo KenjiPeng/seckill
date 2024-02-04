@@ -13,4 +13,6 @@ public interface RedisService {
      * @param value
      */
     void set(String key,Object value);
+
+    Object get(String key);
 }

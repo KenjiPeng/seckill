@@ -3,7 +3,6 @@ package io.kenji.seckill.infrastructure.repository;
 import io.kenji.seckill.domain.model.SeckillUser;
 import io.kenji.seckill.domain.respository.SeckillUserRepository;
 import io.kenji.seckill.infrastructure.mapper.SeckillUserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class SeckillUserRepositoryImpl implements SeckillUserRepository {
-//    @Autowired
     private SeckillUserMapper seckillUserMapper;
 
     public SeckillUserRepositoryImpl(SeckillUserMapper seckillUserMapper) {

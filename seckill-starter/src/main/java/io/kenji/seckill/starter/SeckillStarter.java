@@ -1,6 +1,5 @@
 package io.kenji.seckill.starter;
 
-import io.kenji.seckill.infrastructure.test.TestModule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

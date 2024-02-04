@@ -2,7 +2,6 @@ package io.kenji.seckill.starter.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.kenji.seckill.infrastructure.serializer.JodaDateJsonDeserializer;
@@ -20,6 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @Date 2023/5/27
  **/
 public class RedisConfig {
+
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

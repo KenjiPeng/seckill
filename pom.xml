@@ -34,6 +34,7 @@
         <jakarta.servlet>5.0.0</jakarta.servlet>
         <shiro.spring.version>1.11.0</shiro.spring.version>
         <jwt.version>4.4.0</jwt.version>
+        <jedis.version>4.3.2</jedis.version>
     </properties>
 
 
@@ -65,7 +66,11 @@
             <artifactId>java-jwt</artifactId>
             <version>${jwt.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
 <!--         lombok -->
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 <!--        <dependency>-->
