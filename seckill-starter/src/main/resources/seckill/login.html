@@ -61,6 +61,7 @@
                     if (data.code == "1001") {
                         alert("Login Success");
                         set(common_localstorage_key, data.data);
+                        window.location.href = "activity_list.html";
                     } else {
                         alert("Login Fail：" + data.data);
                     }
