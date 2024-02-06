@@ -1,0 +1,113 @@
+package io.kenji.seckill.application.service.impl;
+
+import io.kenji.seckill.application.service.SeckillGoodsService;
+import io.kenji.seckill.domain.code.HttpCode;
+import io.kenji.seckill.domain.dto.SeckillGoodsDTO;
+import io.kenji.seckill.domain.enums.SeckillGoodsStatus;
+import io.kenji.seckill.domain.exception.SeckillException;
+import io.kenji.seckill.domain.model.SeckillActivity;
+import io.kenji.seckill.domain.model.SeckillGoods;
+import io.kenji.seckill.domain.respository.SeckillActivityRepository;
+import io.kenji.seckill.domain.respository.SeckillGoodsRepository;
+import io.kenji.seckill.infrastructure.utils.id.SnowFlakeFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
+
+/**
+ * @Author Kenji Peng
+ * @Description
+ * @Date 2024-02-06
+ **/
+@Service
+public class SeckillGoodsServiceImpl implements SeckillGoodsService {
+
+    private final SeckillGoodsRepository seckillGoodsRepository;
+
+    private final SeckillActivityRepository seckillActivityRepository;
+
+    public SeckillGoodsServiceImpl(SeckillGoodsRepository seckillGoodsRepository, SeckillActivityRepository seckillActivityRepository) {
+        this.seckillGoodsRepository = seckillGoodsRepository;
+        this.seckillActivityRepository = seckillActivityRepository;
+    }
+
+    /**
+     * @param seckillGoodsDTO
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Integer saveSeckillGoods(SeckillGoodsDTO seckillGoodsDTO) {
+        if (ObjectUtils.isEmpty(seckillGoodsDTO)) {
+            throw new SeckillException(HttpCode.PARAMS_INVALID);
+        }
+        SeckillActivity seckillActivity = seckillActivityRepository.getSeckillActivityById(seckillGoodsDTO.getActivityId());
+        if (ObjectUtils.isEmpty(seckillActivity)) throw new SeckillException(HttpCode.ACTIVITY_NOT_EXISTS);
+        SeckillGoods seckillGoods = new SeckillGoods();
+        BeanUtils.copyProperties(seckillGoodsDTO, seckillGoods);
+        seckillGoods.setStartTime(seckillActivity.getStartTime());
+        seckillGoods.setEndTime(seckillActivity.getEndTime());
+        seckillGoods.setAvailableStock(seckillGoodsDTO.getInitialStock());
+        seckillGoods.setStatus(SeckillGoodsStatus.PUBLISHED.getCode());
+        seckillGoods.setId(SnowFlakeFactory.getSnowFlakeFromCache().nextId());
+        return seckillGoodsRepository.saveSeckillGoods(seckillGoods);
+    }
+
+    /**
+     * @param goodsId
+     * @return
+     */
+    @Override
+    public SeckillGoods getSeckillGoodsByGoodsId(Long goodsId) {
+        return seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId);
+    }
+
+    /**
+     * @param activityId
+     * @return
+     */
+    @Override
+    public List<SeckillGoods> getSeckillGoodsListByActivityId(Long activityId) {
+        return seckillGoodsRepository.getSeckillGoodsListByActivityId(activityId);
+    }
+
+    /**
+     * @param status
+     * @param goodsId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Integer updateSeckillGoodsStatus(Integer status, Long goodsId) {
+        if (ObjectUtils.isEmpty(status) || ObjectUtils.isEmpty(goodsId)) {
+            throw new SeckillException(HttpCode.PARAMS_INVALID);
+        }
+        return seckillGoodsRepository.updateSeckillGoodsStatus(status, goodsId);
+    }
+
+    /**
+     * @param count
+     * @param goodsId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Integer updateAvailableStock(Integer count, Long goodsId) {
+        if (ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(goodsId)) {
+            throw new SeckillException(HttpCode.PARAMS_INVALID);
+        }
+        return seckillGoodsRepository.updateAvailableStock(count, goodsId);
+    }
+
+    /**
+     * @param goodsId
+     * @return
+     */
+    @Override
+    public Integer getAvailableStockByGoodsId(Long goodsId) {
+        return seckillGoodsRepository.getAvailableStockByGoodsId(goodsId);
+    }
+}

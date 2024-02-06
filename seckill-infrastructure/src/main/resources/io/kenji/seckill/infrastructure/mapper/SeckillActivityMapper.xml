@@ -12,8 +12,7 @@
 
     </resultMap>
     <sql id="Base_Column_List">
-        id
-        , activity_name, start_time, end_time,status,activity_desc
+        id, activity_name, start_time, end_time,status,activity_desc
     </sql>
     <insert id="saveSeckillActivity" parameterType="io.kenji.seckill.domain.model.SeckillActivity">
         insert into seckill_activity(<include refid="Base_Column_List"/>) values

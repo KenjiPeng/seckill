@@ -11,6 +11,10 @@ public enum SeckillGoodsStatus {
     OFFLINE(2);
     private final Integer code;
 
+    public Integer getCode() {
+        return code;
+    }
+
     SeckillGoodsStatus(Integer code) {
         this.code = code;
     }

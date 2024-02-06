@@ -90,6 +90,7 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      * @param id
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int updateSeckillActivityStatus(Integer status, Long id) {
         return seckillActivityRepository.updateSeckillActivityStatus(status, id);

@@ -4,13 +4,14 @@ import io.kenji.seckill.domain.model.SeckillUser;
 import io.kenji.seckill.domain.respository.SeckillUserRepository;
 import io.kenji.seckill.infrastructure.mapper.SeckillUserMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 /**
  * @Author Kenji Peng
  * @Description
  * @Date 2023/5/21
  **/
-@Component
+@Repository
 public class SeckillUserRepositoryImpl implements SeckillUserRepository {
     private SeckillUserMapper seckillUserMapper;
 

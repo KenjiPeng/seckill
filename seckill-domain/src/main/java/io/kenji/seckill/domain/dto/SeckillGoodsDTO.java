@@ -1,5 +1,6 @@
-package io.kenji.seckill.domain.model;
+package io.kenji.seckill.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serial;
@@ -10,11 +11,11 @@ import java.util.Date;
 /**
  * @Author Kenji Peng
  * @Description
- * @Date 2023/5/20
+ * @Date 2024-02-06
  **/
-public class SeckillGoods implements Serializable {
+public class SeckillGoodsDTO implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1063157272036583656L;
+    private static final long serialVersionUID = -1741192650119232621L;
     /**
      * Data id
      */
@@ -31,11 +32,13 @@ public class SeckillGoods implements Serializable {
      * Activity start time
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8:00")
     private Date startTime;
     /**
      * Activity end time
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8:00")
     private Date endTime;
     /**
      * Goods original price

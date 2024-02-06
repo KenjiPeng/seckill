@@ -6,6 +6,7 @@ import io.kenji.seckill.domain.model.SeckillActivity;
 import io.kenji.seckill.domain.respository.SeckillActivityRepository;
 import io.kenji.seckill.infrastructure.mapper.SeckillActivityMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  * @Description
  * @Date 2024-02-03
  **/
-@Component
+@Repository
 public class SeckillActivityRepositoryImpl implements SeckillActivityRepository {
 
     private SeckillActivityMapper seckillActivityMapper;
