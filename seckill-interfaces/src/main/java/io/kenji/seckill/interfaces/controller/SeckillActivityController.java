@@ -17,6 +17,7 @@ import java.util.List;
  **/
 @RestController
 @RequestMapping(value = "/activity")
+//@CrossOrigin(allowCredentials = "true", allowedHeaders = "*", originPatterns = "*")
 public class SeckillActivityController {
 
     private final SeckillActivityService seckillActivityService;
@@ -31,24 +32,24 @@ public class SeckillActivityController {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode());
     }
 
-    @RequestMapping(value = "getSeckillActivityListByStatus", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/getSeckillActivityList", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseMessage<List<SeckillActivityDTO>> getSeckillActivityListByStatus(@RequestParam(required = false) Integer status) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.getSeckillActivityListByStatus(status));
     }
 
-    @RequestMapping(value = "getSeckillActivityListBetweenStartTimeAndEndTime", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/getSeckillActivityListBetweenStartTimeAndEndTime", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseMessage<List<SeckillActivityDTO>> getSeckillActivityListBetweenStartTimeAndEndTime(@RequestParam String currentTime,
                                                                                                       @RequestParam Integer status) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.getSeckillActivityListBetweenStartTimeAndEndTime(
                 JodaDateTimeUtils.parseStringToDate(currentTime, JodaDateTimeUtils.DATE_TIME_FORMAT), status));
     }
 
-    @RequestMapping(value = "getSeckillActivityById", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/getSeckillActivityById", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseMessage<SeckillActivityDTO> getSeckillActivityById(@RequestParam Long id) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.getSeckillActivityById(id));
     }
 
-    @RequestMapping(value = "updateSeckillActivityStatus", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/updateStatus", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseMessage<Integer> updateSeckillActivityStatus(@RequestParam Integer status,
                                                                 @RequestParam Long id) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.updateSeckillActivityStatus(status, id));
