@@ -157,13 +157,17 @@
 
 	// Get goods detail
 	function getGoods(activityId){
-		//TODO
-		alert("Get goods detail")
+		window.location.href="goods_list.html?activityId=" + activityId;
 	}
 	// Add goods
 	function submitGoods(data){
-		//TODO
-		alert("Add goods")
+		var id = $(data).attr("data-id");
+		var endTime = $(data).attr("data-end-time");
+		if (currentTime() > endTime){
+			alert("Can't push goods due to activity was over");
+			return;
+		}
+		window.location.href="create_goods.html?activityId=" + id;
 	}
 	// Add activity
 	function submitActivity(){
