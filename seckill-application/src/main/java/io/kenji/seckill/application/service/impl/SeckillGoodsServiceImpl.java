@@ -61,8 +61,10 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      * @return
      */
     @Override
-    public SeckillGoods getSeckillGoodsByGoodsId(Long goodsId) {
-        return seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId);
+    public SeckillGoodsDTO getSeckillGoodsByGoodsId(Long goodsId) {
+        SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
+        BeanUtils.copyProperties(seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId),seckillGoodsDTO);
+        return seckillGoodsDTO;
     }
 
     /**
@@ -70,8 +72,13 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      * @return
      */
     @Override
-    public List<SeckillGoods> getSeckillGoodsListByActivityId(Long activityId) {
-        return seckillGoodsRepository.getSeckillGoodsListByActivityId(activityId);
+    public List<SeckillGoodsDTO> getSeckillGoodsListByActivityId(Long activityId) {
+        List<SeckillGoods> seckillGoodsList = seckillGoodsRepository.getSeckillGoodsListByActivityId(activityId);
+        return seckillGoodsList.stream().map(seckillGoods -> {
+            SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
+            BeanUtils.copyProperties(seckillGoods,seckillGoodsDTO);
+            return seckillGoodsDTO;
+        }).toList();
     }
 
     /**

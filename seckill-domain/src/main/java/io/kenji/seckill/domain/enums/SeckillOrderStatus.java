@@ -12,6 +12,10 @@ public enum SeckillOrderStatus {
     DELETED(-1);
     private final Integer code;
 
+    public Integer getCode() {
+        return code;
+    }
+
     SeckillOrderStatus(Integer code) {
         this.code = code;
     }

@@ -23,14 +23,14 @@ public interface SeckillGoodsService {
      * @param goodsId
      * @return
      */
-    SeckillGoods getSeckillGoodsByGoodsId(Long goodsId);
+    SeckillGoodsDTO getSeckillGoodsByGoodsId(Long goodsId);
 
     /**
      * Get SeckillGoods list by activity id
      * @param activityId
      * @return
      */
-    List<SeckillGoods> getSeckillGoodsListByActivityId(Long activityId);
+    List<SeckillGoodsDTO> getSeckillGoodsListByActivityId(Long activityId);
 
     /**
      * Update SeckillGoods status

@@ -20,7 +20,9 @@ public enum HttpCode {
     BEYOND_LIMIT_NUM(2011, "The order quantity is beyond the limited order"),
     USER_NOT_LOGIN(2012, "User doesn't login"),
     TOKEN_EXPIRE(2013, "Token is expired"),
-    DATA_PARSE_FAILED(2014, "Data parse failed");
+    GOODS_OFFLINE(2014, "Goods was offline"),
+    GOODS_PUBLISHED(2015, "Goods is not online"),
+    DATA_PARSE_FAILED(2016, "Data parse failed");
 
     private final Integer code;
     private final String message;

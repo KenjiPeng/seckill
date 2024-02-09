@@ -33,12 +33,12 @@ public class SeckillGoodsController {
     }
 
     @RequestMapping(value = "/getSeckillGoodsByGoodsId", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseMessage<SeckillGoods> getSeckillGoodsByGoodsId(Long goodsId) {
+    public ResponseMessage<SeckillGoodsDTO> getSeckillGoodsByGoodsId(Long goodsId) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillGoodsService.getSeckillGoodsByGoodsId(goodsId));
     }
 
     @RequestMapping(value = "/getSeckillGoodsListByActivityId", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseMessage<List<SeckillGoods>> getSeckillGoodsListByActivityId(Long activityId) {
+    public ResponseMessage<List<SeckillGoodsDTO>> getSeckillGoodsListByActivityId(Long activityId) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillGoodsService.getSeckillGoodsListByActivityId(activityId));
     }
 
