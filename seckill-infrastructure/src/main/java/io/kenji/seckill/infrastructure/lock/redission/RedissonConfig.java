@@ -16,7 +16,7 @@ import java.util.Arrays;
  * @Date 2024-02-10
  **/
 @Configuration
-@ConditionalOnProperty(name = "distributed.lock.type",havingValue = "redisson")
+@ConditionalOnProperty(name = "distribute.lock.type",havingValue = "redisson")
 public class RedissonConfig {
     @Value("${spring.redis.address}")
     private String redisAddress;

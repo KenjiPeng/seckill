@@ -21,8 +21,10 @@ public enum HttpCode {
     USER_NOT_LOGIN(2012, "User doesn't login"),
     TOKEN_EXPIRE(2013, "Token is expired"),
     GOODS_OFFLINE(2014, "Goods was offline"),
-    GOODS_PUBLISHED(2015, "Goods is not online"),
-    DATA_PARSE_FAILED(2016, "Data parse failed");
+    DATA_PARSE_FAILED(2015, "Data parse failed"),
+    RETRY_LATER(2016, "Retry later"),
+    USER_INVALID(2017, "Current account has exception, can not join activity"),
+    GOODS_PUBLISHED(2018, "Goods is not online");
 
     private final Integer code;
     private final String message;

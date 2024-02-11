@@ -1,5 +1,8 @@
 package io.kenji.seckill.application.service.impl;
 
+import io.kenji.seckill.application.cache.model.SeckillBusinessCache;
+import io.kenji.seckill.application.cache.service.activity.SeckillActivityCacheService;
+import io.kenji.seckill.application.cache.service.activity.SeckillActivityListCacheService;
 import io.kenji.seckill.application.service.SeckillActivityService;
 import io.kenji.seckill.domain.code.HttpCode;
 import io.kenji.seckill.domain.dto.SeckillActivityDTO;
@@ -26,8 +29,14 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
 
     private final SeckillActivityRepository seckillActivityRepository;
 
-    public SeckillActivityServiceImpl(SeckillActivityRepository seckillActivityRepository) {
+    private final SeckillActivityListCacheService seckillActivityListCacheService;
+
+    private final SeckillActivityCacheService seckillActivityCacheService;
+
+    public SeckillActivityServiceImpl(SeckillActivityRepository seckillActivityRepository, SeckillActivityListCacheService seckillActivityListCacheService, SeckillActivityCacheService seckillActivityCacheService) {
         this.seckillActivityRepository = seckillActivityRepository;
+        this.seckillActivityListCacheService = seckillActivityListCacheService;
+        this.seckillActivityCacheService = seckillActivityCacheService;
     }
 
     /**
@@ -94,5 +103,50 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
     @Override
     public int updateSeckillActivityStatus(Integer status, Long id) {
         return seckillActivityRepository.updateSeckillActivityStatus(status, id);
+    }
+
+    /**
+     * @param status
+     * @param version
+     * @return
+     */
+    @Override
+    public List<SeckillActivityDTO> getSeckillActivityList(Integer status, Long version) {
+        SeckillBusinessCache<List<SeckillActivity>> seckillActivityListCache = seckillActivityListCacheService.getCachedActivities(status, version);
+        if (!seckillActivityListCache.isExist()){
+            throw new SeckillException(HttpCode.ACTIVITY_NOT_EXISTS);
+        }
+        //Retry later
+        if (seckillActivityListCache.isRetryLater()){
+            throw new SeckillException(HttpCode.RETRY_LATER);
+        }
+        return seckillActivityListCache.getData().stream().map(seckillActivity -> {
+            SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
+            BeanUtils.copyProperties(seckillActivity,seckillActivityDTO);
+            seckillActivityDTO.setVersion(seckillActivityListCache.getVersion());
+            return seckillActivityDTO;
+        }).toList();
+    }
+
+    /**
+     * @param activityId
+     * @param version
+     * @return
+     */
+    @Override
+    public SeckillActivityDTO getSeckillActivity(Long activityId, Long version) {
+        if (ObjectUtils.isEmpty(activityId))throw new SeckillException(HttpCode.PARAMS_INVALID);
+        SeckillBusinessCache<SeckillActivity> seckillActivityCache = seckillActivityCacheService.getCachedSeckillActivity(activityId, version);
+        if (!seckillActivityCache.isExist()){
+            throw new SeckillException(HttpCode.ACTIVITY_NOT_EXISTS);
+        }
+        //Retry later
+        if (seckillActivityCache.isRetryLater()){
+            throw new SeckillException(HttpCode.RETRY_LATER);
+        }
+        SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
+        BeanUtils.copyProperties(seckillActivityCache.getData(),seckillActivityDTO);
+        seckillActivityDTO.setVersion(seckillActivityCache.getVersion());
+        return seckillActivityDTO;
     }
 }

@@ -14,6 +14,7 @@ public interface SeckillActivityService {
 
     /**
      * Save seckill activity
+     *
      * @param seckillActivityDTO
      * @return
      */
@@ -21,6 +22,7 @@ public interface SeckillActivityService {
 
     /**
      * Get seckill activity info list by status
+     *
      * @param status
      * @return
      */
@@ -28,6 +30,7 @@ public interface SeckillActivityService {
 
     /**
      * Get seckill activity info list by status and time
+     *
      * @param currentTime
      * @param status
      * @return
@@ -36,6 +39,7 @@ public interface SeckillActivityService {
 
     /**
      * Get seckill activity info by id
+     *
      * @param id
      * @return
      */
@@ -43,9 +47,22 @@ public interface SeckillActivityService {
 
     /**
      * Update seckill activity status
+     *
      * @param status
      * @param id
      * @return
      */
-    int updateSeckillActivityStatus(Integer status,Long id);
+    int updateSeckillActivityStatus(Integer status, Long id);
+
+    /**
+     * Get seckill activity list
+     *
+     * @param status
+     * @param version
+     * @return
+     */
+    List<SeckillActivityDTO> getSeckillActivityList(Integer status, Long version);
+
+
+    SeckillActivityDTO getSeckillActivity(Long activityId, Long version);
 }

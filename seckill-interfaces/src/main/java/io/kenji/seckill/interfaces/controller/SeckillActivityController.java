@@ -54,4 +54,17 @@ public class SeckillActivityController {
                                                                 @RequestParam Long id) {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.updateSeckillActivityStatus(status, id));
     }
+
+    @RequestMapping(value = "/getSeckillActivityListByStatusAndVersion", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseMessage<List<SeckillActivityDTO>> getSeckillActivityListByStatusAndVersion(@RequestParam(required = false) Integer status,
+                                                                                              @RequestParam(required = false) Long version) {
+        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.getSeckillActivityList(status, version));
+    }
+
+    @RequestMapping(value = "/getSeckillActivity", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseMessage<SeckillActivityDTO> getSeckillActivity(@RequestParam(required = false) Long activityId,
+                                                                  @RequestParam(required = false) Long version) {
+        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.getSeckillActivity(activityId, version));
+    }
+
 }

@@ -97,6 +97,16 @@ public class RedisCacheService implements DistributedCacheService {
 
     /**
      * @param key
+     * @param
+     * @return
+     */
+    @Override
+    public Object getObject(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    /**
+     * @param key
      * @return
      */
     @Override

@@ -14,6 +14,7 @@ public interface DistributedCacheService {
     void put(String key, Object value, long timeout, TimeUnit timeUnit);
     void put(String key,Object value,long expireTime);
     <T> T getObject(String key,Class<T> targetClass);
+    <T> T getObject(String key);
     String getString(String key);
     <T> List<T> getList(String key,Class<T> targetClass);
     Boolean delete(String key);
