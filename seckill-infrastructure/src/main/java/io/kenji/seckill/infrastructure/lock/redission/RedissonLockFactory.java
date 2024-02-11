@@ -33,7 +33,7 @@ public class RedissonLockFactory implements DistributedLockFactory {
      * @return
      */
     @Override
-    public DistributedLock getDDistributedLock(String key) {
+    public DistributedLock getDistributedLock(String key) {
         RLock rLock =  redissonClient.getLock(key);
         return new DistributedLock() {
             @Override

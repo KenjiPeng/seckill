@@ -98,7 +98,7 @@ public class SeckillActivityListCacheServiceImpl implements SeckillActivityListC
     @Override
     public SeckillBusinessCache<List<SeckillActivity>> tryUpdateSeckillActivityCacheByLock(Integer status) {
         logger.info("Update distributed cache | {}", status);
-        DistributedLock lock = distributedLockFactory.getDDistributedLock(SECKILL_ACTIVITIES_UPDATE_CACHE_LOCK_KEY.concat(String.valueOf(status)));
+        DistributedLock lock = distributedLockFactory.getDistributedLock(SECKILL_ACTIVITIES_UPDATE_CACHE_LOCK_KEY.concat(String.valueOf(status)));
         try {
             boolean isLockSuccess = lock.tryLock(1, 5, TimeUnit.SECONDS);
             if (!isLockSuccess) {

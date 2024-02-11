@@ -8,5 +8,5 @@ import io.kenji.seckill.infrastructure.lock.DistributedLock;
  * @Date 2024-02-10
  **/
 public interface DistributedLockFactory {
-    DistributedLock getDDistributedLock(String key);
+    DistributedLock getDistributedLock(String key);
 }
