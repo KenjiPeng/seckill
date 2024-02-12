@@ -1,7 +1,6 @@
 package io.kenji.seckill.application.service;
 
 import io.kenji.seckill.domain.dto.SeckillGoodsDTO;
-import io.kenji.seckill.domain.model.SeckillGoods;
 
 import java.util.List;
 
@@ -54,4 +53,12 @@ public interface SeckillGoodsService {
      * @return
      */
     Integer getAvailableStockByGoodsId(Long id);
+
+    /**
+     * Get Seckill goods list by given activityId and version
+     * @param activityId
+     * @param version
+     * @return
+     */
+    List<SeckillGoodsDTO> getSeckillGoodsList(Long activityId, Long version);
 }

@@ -1,5 +1,7 @@
 package io.kenji.seckill.application.service.impl;
 
+import io.kenji.seckill.application.cache.model.SeckillBusinessCache;
+import io.kenji.seckill.application.cache.service.goods.SeckillGoodsListCacheService;
 import io.kenji.seckill.application.service.SeckillGoodsService;
 import io.kenji.seckill.domain.code.HttpCode;
 import io.kenji.seckill.domain.dto.SeckillGoodsDTO;
@@ -29,9 +31,12 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     private final SeckillActivityRepository seckillActivityRepository;
 
-    public SeckillGoodsServiceImpl(SeckillGoodsRepository seckillGoodsRepository, SeckillActivityRepository seckillActivityRepository) {
+    private final SeckillGoodsListCacheService seckillGoodsListCacheService;
+
+    public SeckillGoodsServiceImpl(SeckillGoodsRepository seckillGoodsRepository, SeckillActivityRepository seckillActivityRepository, SeckillGoodsListCacheService seckillGoodsListCacheService) {
         this.seckillGoodsRepository = seckillGoodsRepository;
         this.seckillActivityRepository = seckillActivityRepository;
+        this.seckillGoodsListCacheService = seckillGoodsListCacheService;
     }
 
     /**
@@ -63,7 +68,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Override
     public SeckillGoodsDTO getSeckillGoodsByGoodsId(Long goodsId) {
         SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
-        BeanUtils.copyProperties(seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId),seckillGoodsDTO);
+        BeanUtils.copyProperties(seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId), seckillGoodsDTO);
         return seckillGoodsDTO;
     }
 
@@ -76,7 +81,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         List<SeckillGoods> seckillGoodsList = seckillGoodsRepository.getSeckillGoodsListByActivityId(activityId);
         return seckillGoodsList.stream().map(seckillGoods -> {
             SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
-            BeanUtils.copyProperties(seckillGoods,seckillGoodsDTO);
+            BeanUtils.copyProperties(seckillGoods, seckillGoodsDTO);
             return seckillGoodsDTO;
         }).toList();
     }
@@ -116,5 +121,29 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Override
     public Integer getAvailableStockByGoodsId(Long goodsId) {
         return seckillGoodsRepository.getAvailableStockByGoodsId(goodsId);
+    }
+
+    /**
+     * @param activityId
+     * @param version
+     * @return
+     */
+    @Override
+    public List<SeckillGoodsDTO> getSeckillGoodsList(Long activityId, Long version) {
+        if (ObjectUtils.isEmpty(activityId)) throw new SeckillException(HttpCode.PARAMS_INVALID);
+        SeckillBusinessCache<List<SeckillGoods>> seckillGoodsListCache = seckillGoodsListCacheService.getCachedGoodsList(activityId, version);
+        if (!seckillGoodsListCache.isExist()) {
+            throw new SeckillException(HttpCode.GOODS_NOT_EXISTS);
+        }
+        //Retry later
+        if (seckillGoodsListCache.isRetryLater()) {
+            throw new SeckillException(HttpCode.RETRY_LATER);
+        }
+        return seckillGoodsListCache.getData().stream().map(seckillGoods -> {
+            SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
+            BeanUtils.copyProperties(seckillGoods, seckillGoodsDTO);
+            seckillGoodsDTO.setVersion(seckillGoodsListCache.getVersion());
+            return seckillGoodsDTO;
+        }).toList();
     }
 }

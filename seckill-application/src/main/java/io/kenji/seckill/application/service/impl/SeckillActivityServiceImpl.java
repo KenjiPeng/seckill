@@ -113,16 +113,16 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
     @Override
     public List<SeckillActivityDTO> getSeckillActivityList(Integer status, Long version) {
         SeckillBusinessCache<List<SeckillActivity>> seckillActivityListCache = seckillActivityListCacheService.getCachedActivities(status, version);
-        if (!seckillActivityListCache.isExist()){
+        if (!seckillActivityListCache.isExist()) {
             throw new SeckillException(HttpCode.ACTIVITY_NOT_EXISTS);
         }
         //Retry later
-        if (seckillActivityListCache.isRetryLater()){
+        if (seckillActivityListCache.isRetryLater()) {
             throw new SeckillException(HttpCode.RETRY_LATER);
         }
         return seckillActivityListCache.getData().stream().map(seckillActivity -> {
             SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
-            BeanUtils.copyProperties(seckillActivity,seckillActivityDTO);
+            BeanUtils.copyProperties(seckillActivity, seckillActivityDTO);
             seckillActivityDTO.setVersion(seckillActivityListCache.getVersion());
             return seckillActivityDTO;
         }).toList();
@@ -135,17 +135,17 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      */
     @Override
     public SeckillActivityDTO getSeckillActivity(Long activityId, Long version) {
-        if (ObjectUtils.isEmpty(activityId))throw new SeckillException(HttpCode.PARAMS_INVALID);
+        if (ObjectUtils.isEmpty(activityId)) throw new SeckillException(HttpCode.PARAMS_INVALID);
         SeckillBusinessCache<SeckillActivity> seckillActivityCache = seckillActivityCacheService.getCachedSeckillActivity(activityId, version);
-        if (!seckillActivityCache.isExist()){
+        if (!seckillActivityCache.isExist()) {
             throw new SeckillException(HttpCode.ACTIVITY_NOT_EXISTS);
         }
         //Retry later
-        if (seckillActivityCache.isRetryLater()){
+        if (seckillActivityCache.isRetryLater()) {
             throw new SeckillException(HttpCode.RETRY_LATER);
         }
         SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
-        BeanUtils.copyProperties(seckillActivityCache.getData(),seckillActivityDTO);
+        BeanUtils.copyProperties(seckillActivityCache.getData(), seckillActivityDTO);
         seckillActivityDTO.setVersion(seckillActivityCache.getVersion());
         return seckillActivityDTO;
     }

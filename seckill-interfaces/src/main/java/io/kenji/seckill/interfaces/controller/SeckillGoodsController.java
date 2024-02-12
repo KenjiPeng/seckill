@@ -48,4 +48,8 @@ public class SeckillGoodsController {
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode());
     }
 
+    @RequestMapping(value = "/getSeckillGoodsList", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseMessage<List<SeckillGoodsDTO>> getSeckillGoodsList(Long activityId, Long version) {
+        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillGoodsService.getSeckillGoodsList(activityId, version));
+    }
 }

@@ -40,6 +40,8 @@ public class SeckillConstants {
     public static final String SECKILL_ACTIVITIES_CACHE_KEY = "SECKILL_ACTIVITIES_CACHE_KEY";
     public static final String SECKILL_ACTIVITY_CACHE_KEY = "SECKILL_ACTIVITY_CACHE_KEY";
 
+    public static final String SECKILL_GOODS_LIST_CACHE_KEY = "SECKILL_GOODS_LIST_CACHE_KEY";
+
     public static final Long FIVE_MINUTES = 5 * 60L;
 
 
