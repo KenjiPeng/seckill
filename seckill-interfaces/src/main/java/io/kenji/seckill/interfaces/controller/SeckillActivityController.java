@@ -50,9 +50,10 @@ public class SeckillActivityController {
     }
 
     @RequestMapping(value = "/updateStatus", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseMessage<Integer> updateSeckillActivityStatus(@RequestParam Integer status,
+    public ResponseMessage<String> updateSeckillActivityStatus(@RequestParam Integer status,
                                                                 @RequestParam Long id) {
-        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillActivityService.updateSeckillActivityStatus(status, id));
+        seckillActivityService.updateSeckillActivityStatus(status, id);
+        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode());
     }
 
     @RequestMapping(value = "/getSeckillActivityListByStatusAndVersion", method = {RequestMethod.POST, RequestMethod.GET})

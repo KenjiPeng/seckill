@@ -15,7 +15,7 @@ public interface SeckillGoodsService {
      * @param seckillGoodsDTO
      * @return
      */
-    Integer saveSeckillGoods(SeckillGoodsDTO seckillGoodsDTO);
+    void saveSeckillGoods(SeckillGoodsDTO seckillGoodsDTO);
 
     /**
      * Get SeckillGoods by goods id
@@ -37,7 +37,7 @@ public interface SeckillGoodsService {
      * @param goodsId
      * @return
      */
-    Integer updateSeckillGoodsStatus(Integer status,Long goodsId);
+    void updateSeckillGoodsStatus(Integer status,Long goodsId);
 
     /**
      * Update available stock
@@ -45,7 +45,7 @@ public interface SeckillGoodsService {
      * @param goodsId
      * @return
      */
-    Integer updateAvailableStock(Integer count,Long goodsId);
+    void updateAvailableStock(Integer count,Long goodsId);
 
     /**
      * Get available stock by goods id

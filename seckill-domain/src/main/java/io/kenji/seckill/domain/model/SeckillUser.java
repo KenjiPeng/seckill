@@ -1,7 +1,6 @@
 package io.kenji.seckill.domain.model;
 
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,7 +10,6 @@ import java.io.Serializable;
  **/
 public class SeckillUser implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 8975856674362682714L;
     /**
      * User id

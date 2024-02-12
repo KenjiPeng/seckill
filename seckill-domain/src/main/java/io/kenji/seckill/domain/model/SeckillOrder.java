@@ -2,7 +2,6 @@ package io.kenji.seckill.domain.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,7 +13,6 @@ import java.util.Date;
  **/
 
 public class SeckillOrder implements Serializable {
-    @Serial
     private static final long serialVersionUID = -4018964661834680155L;
     /**
      * Order id
@@ -138,4 +136,5 @@ public class SeckillOrder implements Serializable {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
 }

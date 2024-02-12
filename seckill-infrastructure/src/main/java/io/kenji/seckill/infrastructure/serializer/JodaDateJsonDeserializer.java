@@ -1,6 +1,5 @@
 package io.kenji.seckill.infrastructure.serializer;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -21,10 +20,10 @@ public class JodaDateJsonDeserializer extends JsonDeserializer {
      * @param deserializationContext
      * @return
      * @throws IOException
-     * @throws JacksonException
+     * @throws
      */
     @Override
-    public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String dataString = jsonParser.readValueAs(String.class);
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         return DateTime.parse(dataString, formatter);

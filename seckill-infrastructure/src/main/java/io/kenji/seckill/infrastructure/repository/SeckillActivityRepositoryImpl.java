@@ -5,7 +5,7 @@ import io.kenji.seckill.domain.exception.SeckillException;
 import io.kenji.seckill.domain.model.SeckillActivity;
 import io.kenji.seckill.domain.respository.SeckillActivityRepository;
 import io.kenji.seckill.infrastructure.mapper.SeckillActivityMapper;
-import org.springframework.stereotype.Component;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -40,7 +40,7 @@ public class SeckillActivityRepositoryImpl implements SeckillActivityRepository 
      * @return
      */
     @Override
-    public List<SeckillActivity> getSeckillActivityListByStatus(Integer status) {
+    public List<SeckillActivity> getSeckillActivityListByStatus(@Param("status") Integer status) {
         return seckillActivityMapper.getSeckillActivityListByStatus(status);
     }
 

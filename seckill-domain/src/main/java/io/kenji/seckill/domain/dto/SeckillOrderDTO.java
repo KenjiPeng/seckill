@@ -3,7 +3,6 @@ package io.kenji.seckill.domain.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,7 +13,6 @@ import java.util.Date;
  * @Date 2024-02-08
  **/
 public class SeckillOrderDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1132775603928095563L;
     /**
      * Order id

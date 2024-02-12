@@ -1,8 +1,8 @@
 package io.kenji.seckill.domain.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,7 +13,6 @@ import java.util.Date;
  **/
 public class SeckillActivity implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 6010465583023597463L;
     /**
      * Activity id
@@ -89,5 +88,14 @@ public class SeckillActivity implements Serializable {
 
     public void setActivityDesc(String activityDesc) {
         this.activityDesc = activityDesc;
+    }
+
+
+    public boolean validateParams() {
+        return StringUtils.hasLength(activityDesc) &&
+                startTime != null &&
+                endTime != null &&
+                !endTime.before(startTime) &&
+                !endTime.before(new Date());
     }
 }

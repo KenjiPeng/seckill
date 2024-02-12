@@ -9,7 +9,7 @@ import io.kenji.seckill.domain.enums.SeckillGoodsStatus;
 import io.kenji.seckill.domain.enums.SeckillOrderStatus;
 import io.kenji.seckill.domain.exception.SeckillException;
 import io.kenji.seckill.domain.model.SeckillOrder;
-import io.kenji.seckill.domain.respository.SeckillOrderRepository;
+import io.kenji.seckill.domain.service.SeckillOrderDomainService;
 import io.kenji.seckill.infrastructure.utils.id.SnowFlakeFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @Author Kenji Peng
@@ -28,11 +29,11 @@ import java.util.Objects;
 @Service
 public class SeckillOrderServiceImpl implements SeckillOrderService {
 
-    private final SeckillOrderRepository seckillOrderRepository;
+    private final SeckillOrderDomainService seckillOrderDomainService;
     private final SeckillGoodsService seckillGoodsService;
 
-    public SeckillOrderServiceImpl(SeckillOrderRepository seckillOrderRepository, SeckillGoodsService seckillGoodsService) {
-        this.seckillOrderRepository = seckillOrderRepository;
+    public SeckillOrderServiceImpl(SeckillOrderDomainService seckillOrderDomainService, SeckillGoodsService seckillGoodsService) {
+        this.seckillOrderDomainService = seckillOrderDomainService;
         this.seckillGoodsService = seckillGoodsService;
     }
 
@@ -44,7 +45,6 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     public SeckillOrderDTO saveSeckillOrder(SeckillOrderDTO seckillOrderDTO) {
         if (ObjectUtils.isEmpty(seckillOrderDTO)) throw new SeckillException(HttpCode.PARAMS_INVALID);
         SeckillGoodsDTO seckillGoodsDTO = seckillGoodsService.getSeckillGoodsByGoodsId(seckillOrderDTO.getGoodsId());
-//        SeckillGoods seckillGoods = (SeckillGoods) seckillGoodsDTO;
         if (ObjectUtils.isEmpty(seckillGoodsDTO)) throw new SeckillException(HttpCode.GOODS_NOT_EXISTS);
         if (Objects.equals(seckillGoodsDTO.getStatus(), SeckillGoodsStatus.PUBLISHED.getCode()))
             throw new SeckillException(HttpCode.GOODS_PUBLISHED);
@@ -67,7 +67,7 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         seckillOrderDTO.setGoodsName(seckillGoodsDTO.getGoodsName());
         BeanUtils.copyProperties(seckillOrderDTO, seckillOrder);
         //save order
-        seckillOrderRepository.saveSeckillOrder(seckillOrder);
+        seckillOrderDomainService.saveSeckillOrder(seckillOrder);
         //update stock
         seckillGoodsService.updateAvailableStock(seckillGoodsDTO.getAvailableStock() - seckillOrderDTO.getQuantity(), seckillOrderDTO.getGoodsId());
         return seckillOrderDTO;
@@ -79,8 +79,8 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      */
     @Override
     public List<SeckillOrderDTO> getSeckillOrderByUserId(Long userId) {
-        return seckillOrderRepository.getSeckillOrderByUserId(userId).stream().map(this::seckillOrderConverterToSeckillOrderDTO
-        ).toList();
+        return seckillOrderDomainService.getSeckillOrderByUserId(userId).stream().map(this::seckillOrderConverterToSeckillOrderDTO
+        ).collect(Collectors.toList());
     }
 
     /**
@@ -89,7 +89,7 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      */
     @Override
     public List<SeckillOrderDTO> getSeckillOrderByActivityId(Long activityId) {
-        return seckillOrderRepository.getSeckillOrderByActivityId(activityId).stream().map(this::seckillOrderConverterToSeckillOrderDTO).toList();
+        return seckillOrderDomainService.getSeckillOrderByActivityId(activityId).stream().map(this::seckillOrderConverterToSeckillOrderDTO).collect(Collectors.toList());
     }
 
     private SeckillOrderDTO seckillOrderConverterToSeckillOrderDTO(SeckillOrder seckillOrder) {

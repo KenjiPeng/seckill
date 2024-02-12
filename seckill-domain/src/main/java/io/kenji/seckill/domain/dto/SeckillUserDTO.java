@@ -1,7 +1,6 @@
 package io.kenji.seckill.domain.dto;
 
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -10,7 +9,6 @@ import java.io.Serializable;
  * @Date 2023/5/22
  **/
 public class SeckillUserDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = -3045506676080226837L;
     /**
      * User name

@@ -4,12 +4,13 @@ import io.kenji.seckill.domain.code.HttpCode;
 import io.kenji.seckill.domain.constants.SeckillConstants;
 import io.kenji.seckill.domain.exception.SeckillException;
 import io.kenji.seckill.infrastructure.shiro.utils.JwtUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Author Kenji Peng

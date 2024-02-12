@@ -1,17 +1,15 @@
-package io.kenji.seckill.infrastructure.mapper;
+package io.kenji.seckill.domain.service;
 
 import io.kenji.seckill.domain.model.SeckillOrder;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
  * @Author Kenji Peng
  * @Description
- * @Date 2024-02-08
+ * @Date 2024-02-12
  **/
-public interface SeckillOrderMapper {
-
+public interface SeckillOrderDomainService {
     /**
      * Save order
      * @param seckillOrder
@@ -24,12 +22,13 @@ public interface SeckillOrderMapper {
      * @param userId
      * @return
      */
-    List<SeckillOrder> getSeckillOrderByUserId(@Param("userId")Long userId);
+    List<SeckillOrder> getSeckillOrderByUserId(Long userId);
 
     /**
      * Get seckill order by activity id
      * @param activityId
      * @return
      */
-    List<SeckillOrder> getSeckillOrderByActivityId(@Param("activityId")Long activityId);
+    List<SeckillOrder> getSeckillOrderByActivityId(Long activityId);
+
 }

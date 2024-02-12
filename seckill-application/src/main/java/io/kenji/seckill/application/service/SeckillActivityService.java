@@ -18,7 +18,7 @@ public interface SeckillActivityService {
      * @param seckillActivityDTO
      * @return
      */
-    int saveSeckillActivity(SeckillActivityDTO seckillActivityDTO);
+    void saveSeckillActivity(SeckillActivityDTO seckillActivityDTO);
 
     /**
      * Get seckill activity info list by status
@@ -52,7 +52,7 @@ public interface SeckillActivityService {
      * @param id
      * @return
      */
-    int updateSeckillActivityStatus(Integer status, Long id);
+    void updateSeckillActivityStatus(Integer status, Long id);
 
     /**
      * Get seckill activity list

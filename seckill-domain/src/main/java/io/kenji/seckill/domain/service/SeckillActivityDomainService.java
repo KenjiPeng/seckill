@@ -1,7 +1,6 @@
-package io.kenji.seckill.infrastructure.mapper;
+package io.kenji.seckill.domain.service;
 
 import io.kenji.seckill.domain.model.SeckillActivity;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -9,22 +8,23 @@ import java.util.List;
 /**
  * @Author Kenji Peng
  * @Description
- * @Date 2024-02-03
+ * @Date 2024-02-12
  **/
-public interface SeckillActivityMapper {
+public interface SeckillActivityDomainService {
+
     /**
      * Save seckill activity
      * @param seckillActivity
-     * @return
+     *
      */
-    int saveSeckillActivity(SeckillActivity seckillActivity);
+    void saveSeckillActivity(SeckillActivity seckillActivity);
 
     /**
      * Get seckill activity info list by status
      * @param status
      * @return
      */
-    List<SeckillActivity> getSeckillActivityListByStatus(@Param("status") Integer status);
+    List<SeckillActivity> getSeckillActivityListByStatus(Integer status);
 
     /**
      * Get seckill activity info list by status and time
@@ -32,20 +32,20 @@ public interface SeckillActivityMapper {
      * @param status
      * @return
      */
-    List<SeckillActivity> getSeckillActivityListBetweenStartTimeAndEndTime(@Param("currentTime")Date currentTime,@Param("status") Integer status);
+    List<SeckillActivity> getSeckillActivityListBetweenStartTimeAndEndTime(Date currentTime, Integer status);
 
     /**
      * Get seckill activity info by id
      * @param id
      * @return
      */
-    SeckillActivity getSeckillActivityById(@Param("id") Long id);
+    SeckillActivity getSeckillActivityById(Long id);
 
     /**
      * Update seckill activity status
      * @param status
      * @param id
-     * @return
+     *
      */
-    int updateSeckillActivityStatus(@Param("status")Integer status,@Param("id")Long id);
+    void updateSeckillActivityStatus(Integer status,Long id);
 }

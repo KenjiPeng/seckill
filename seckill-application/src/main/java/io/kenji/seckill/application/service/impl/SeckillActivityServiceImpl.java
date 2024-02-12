@@ -9,7 +9,7 @@ import io.kenji.seckill.domain.dto.SeckillActivityDTO;
 import io.kenji.seckill.domain.enums.SeckillActivityStatus;
 import io.kenji.seckill.domain.exception.SeckillException;
 import io.kenji.seckill.domain.model.SeckillActivity;
-import io.kenji.seckill.domain.respository.SeckillActivityRepository;
+import io.kenji.seckill.domain.service.SeckillActivityDomainService;
 import io.kenji.seckill.infrastructure.utils.id.SnowFlakeFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author Kenji Peng
@@ -27,14 +28,15 @@ import java.util.List;
 @Service
 public class SeckillActivityServiceImpl implements SeckillActivityService {
 
-    private final SeckillActivityRepository seckillActivityRepository;
+    private final SeckillActivityDomainService seckillActivityDomainService;
 
     private final SeckillActivityListCacheService seckillActivityListCacheService;
 
     private final SeckillActivityCacheService seckillActivityCacheService;
 
-    public SeckillActivityServiceImpl(SeckillActivityRepository seckillActivityRepository, SeckillActivityListCacheService seckillActivityListCacheService, SeckillActivityCacheService seckillActivityCacheService) {
-        this.seckillActivityRepository = seckillActivityRepository;
+    public SeckillActivityServiceImpl(SeckillActivityDomainService seckillActivityDomainService, SeckillActivityListCacheService seckillActivityListCacheService,
+                                      SeckillActivityCacheService seckillActivityCacheService) {
+        this.seckillActivityDomainService = seckillActivityDomainService;
         this.seckillActivityListCacheService = seckillActivityListCacheService;
         this.seckillActivityCacheService = seckillActivityCacheService;
     }
@@ -45,13 +47,13 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int saveSeckillActivity(SeckillActivityDTO seckillActivityDTO) {
+    public void saveSeckillActivity(SeckillActivityDTO seckillActivityDTO) {
         if (ObjectUtils.isEmpty(seckillActivityDTO)) throw new SeckillException(HttpCode.PARAMS_INVALID);
         SeckillActivity seckillActivity = new SeckillActivity();
         BeanUtils.copyProperties(seckillActivityDTO, seckillActivity);
         seckillActivity.setId(SnowFlakeFactory.getSnowFlakeFromCache().nextId());
         seckillActivity.setStatus(SeckillActivityStatus.PUBLISHED.getCode());
-        return seckillActivityRepository.saveSeckillActivity(seckillActivity);
+        seckillActivityDomainService.saveSeckillActivity(seckillActivity);
     }
 
     /**
@@ -60,12 +62,12 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      */
     @Override
     public List<SeckillActivityDTO> getSeckillActivityListByStatus(Integer status) {
-        List<SeckillActivity> seckillActivityList = seckillActivityRepository.getSeckillActivityListByStatus(status);
+        List<SeckillActivity> seckillActivityList = seckillActivityDomainService.getSeckillActivityListByStatus(status);
         return seckillActivityList.stream().map(seckillActivity -> {
             SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
             BeanUtils.copyProperties(seckillActivity, seckillActivityDTO);
             return seckillActivityDTO;
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -75,12 +77,12 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      */
     @Override
     public List<SeckillActivityDTO> getSeckillActivityListBetweenStartTimeAndEndTime(Date currentTime, Integer status) {
-        List<SeckillActivity> seckillActivityList = seckillActivityRepository.getSeckillActivityListBetweenStartTimeAndEndTime(currentTime, status);
+        List<SeckillActivity> seckillActivityList = seckillActivityDomainService.getSeckillActivityListBetweenStartTimeAndEndTime(currentTime, status);
         return seckillActivityList.stream().map(seckillActivity -> {
             SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
             BeanUtils.copyProperties(seckillActivity, seckillActivityDTO);
             return seckillActivityDTO;
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -90,7 +92,7 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
     @Override
     public SeckillActivityDTO getSeckillActivityById(Long id) {
         SeckillActivityDTO seckillActivityDTO = new SeckillActivityDTO();
-        BeanUtils.copyProperties(seckillActivityRepository.getSeckillActivityById(id), seckillActivityDTO);
+        BeanUtils.copyProperties(seckillActivityDomainService.getSeckillActivityById(id), seckillActivityDTO);
         return seckillActivityDTO;
     }
 
@@ -101,8 +103,8 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int updateSeckillActivityStatus(Integer status, Long id) {
-        return seckillActivityRepository.updateSeckillActivityStatus(status, id);
+    public void updateSeckillActivityStatus(Integer status, Long id) {
+        seckillActivityDomainService.updateSeckillActivityStatus(status, id);
     }
 
     /**
@@ -125,7 +127,7 @@ public class SeckillActivityServiceImpl implements SeckillActivityService {
             BeanUtils.copyProperties(seckillActivity, seckillActivityDTO);
             seckillActivityDTO.setVersion(seckillActivityListCache.getVersion());
             return seckillActivityDTO;
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     /**

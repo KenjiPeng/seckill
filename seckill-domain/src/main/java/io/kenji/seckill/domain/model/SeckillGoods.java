@@ -1,8 +1,8 @@
 package io.kenji.seckill.domain.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,7 +13,6 @@ import java.util.Date;
  * @Date 2023/5/20
  **/
 public class SeckillGoods implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1063157272036583656L;
     /**
      * Data id
@@ -173,5 +172,23 @@ public class SeckillGoods implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+
+    public boolean validateParams() {
+        return StringUtils.hasLength(goodsName) &&
+                activityId != null &&
+                startTime != null &&
+                endTime != null &&
+                !endTime.before(startTime) &&
+                !endTime.before(new Date()) &&
+                activityPrice != null &&
+                activityPrice.compareTo(BigDecimal.ZERO) >= 0 &&
+                originalPrice != null &&
+                originalPrice.compareTo(BigDecimal.ZERO) >= 0 &&
+                initialStock != null &&
+                initialStock > 0 &&
+                limitNum != null &&
+                limitNum > 0;
     }
 }

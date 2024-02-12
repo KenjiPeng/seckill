@@ -1,36 +1,35 @@
-package io.kenji.seckill.infrastructure.mapper;
+package io.kenji.seckill.domain.service;
 
 import io.kenji.seckill.domain.model.SeckillGoods;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
  * @Author Kenji Peng
  * @Description
- * @Date 2024-02-06
+ * @Date 2024-02-12
  **/
-public interface SeckillGoodsMapper {
+public interface SeckillGoodsDomainService {
     /**
      * Save SeckillGoods
      * @param seckillGoods
      * @return
      */
-    Integer saveSeckillGoods(SeckillGoods seckillGoods);
+    void saveSeckillGoods(SeckillGoods seckillGoods);
 
     /**
      * Get SeckillGoods by goods id
      * @param goodsId
      * @return
      */
-    SeckillGoods getSeckillGoodsByGoodsId(@Param("goodsId") Long goodsId);
+    SeckillGoods getSeckillGoodsByGoodsId(Long goodsId);
 
     /**
      * Get SeckillGoods list by activity id
      * @param activityId
      * @return
      */
-    List<SeckillGoods> getSeckillGoodsListByActivityId(@Param("activityId") Long activityId);
+    List<SeckillGoods> getSeckillGoodsListByActivityId(Long activityId);
 
     /**
      * Update SeckillGoods status
@@ -38,7 +37,7 @@ public interface SeckillGoodsMapper {
      * @param goodsId
      * @return
      */
-    Integer updateSeckillGoodsStatus(@Param("status")Integer status,@Param("goodsId")Long goodsId);
+    void updateSeckillGoodsStatus(Integer status,Long goodsId);
 
     /**
      * Update available stock
@@ -46,12 +45,12 @@ public interface SeckillGoodsMapper {
      * @param goodsId
      * @return
      */
-    Integer updateAvailableStock(@Param("count")Integer count,@Param("goodsId")Long goodsId);
+    void updateAvailableStock(Integer count,Long goodsId);
 
     /**
      * Get available stock by goods id
      * @param goodsId
      * @return
      */
-    Integer getAvailableStockByGoodsId(@Param("goodsId")Long goodsId);
+    Integer getAvailableStockByGoodsId(Long goodsId);
 }
