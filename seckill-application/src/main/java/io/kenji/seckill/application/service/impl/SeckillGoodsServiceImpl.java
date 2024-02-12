@@ -1,6 +1,7 @@
 package io.kenji.seckill.application.service.impl;
 
 import io.kenji.seckill.application.cache.model.SeckillBusinessCache;
+import io.kenji.seckill.application.cache.service.goods.SeckillGoodsCacheService;
 import io.kenji.seckill.application.cache.service.goods.SeckillGoodsListCacheService;
 import io.kenji.seckill.application.service.SeckillGoodsService;
 import io.kenji.seckill.domain.code.HttpCode;
@@ -33,10 +34,13 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     private final SeckillGoodsListCacheService seckillGoodsListCacheService;
 
-    public SeckillGoodsServiceImpl(SeckillGoodsRepository seckillGoodsRepository, SeckillActivityRepository seckillActivityRepository, SeckillGoodsListCacheService seckillGoodsListCacheService) {
+    private final SeckillGoodsCacheService seckillGoodsCacheService;
+
+    public SeckillGoodsServiceImpl(SeckillGoodsRepository seckillGoodsRepository, SeckillActivityRepository seckillActivityRepository, SeckillGoodsListCacheService seckillGoodsListCacheService, SeckillGoodsCacheService seckillGoodsCacheService) {
         this.seckillGoodsRepository = seckillGoodsRepository;
         this.seckillActivityRepository = seckillActivityRepository;
         this.seckillGoodsListCacheService = seckillGoodsListCacheService;
+        this.seckillGoodsCacheService = seckillGoodsCacheService;
     }
 
     /**
@@ -131,7 +135,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Override
     public List<SeckillGoodsDTO> getSeckillGoodsList(Long activityId, Long version) {
         if (ObjectUtils.isEmpty(activityId)) throw new SeckillException(HttpCode.PARAMS_INVALID);
-        SeckillBusinessCache<List<SeckillGoods>> seckillGoodsListCache = seckillGoodsListCacheService.getCachedGoodsList(activityId, version);
+        SeckillBusinessCache<List<SeckillGoods>> seckillGoodsListCache = seckillGoodsListCacheService.getSeckillGoodsList(activityId, version);
         if (!seckillGoodsListCache.isExist()) {
             throw new SeckillException(HttpCode.GOODS_NOT_EXISTS);
         }
@@ -145,5 +149,27 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
             seckillGoodsDTO.setVersion(seckillGoodsListCache.getVersion());
             return seckillGoodsDTO;
         }).toList();
+    }
+
+    /**
+     * @param goodsId
+     * @param version
+     * @return
+     */
+    @Override
+    public SeckillGoodsDTO getSeckillGoods(Long goodsId, Long version) {
+        if (ObjectUtils.isEmpty(goodsId)) throw new SeckillException(HttpCode.PARAMS_INVALID);
+        SeckillBusinessCache<SeckillGoods> seckillGoodsCache = seckillGoodsCacheService.getSeckillGoods(goodsId, version);
+        if (!seckillGoodsCache.isExist()) {
+            throw new SeckillException(HttpCode.GOODS_NOT_EXISTS);
+        }
+        //Retry later
+        if (seckillGoodsCache.isRetryLater()) {
+            throw new SeckillException(HttpCode.RETRY_LATER);
+        }
+        SeckillGoodsDTO seckillGoodsDTO = new SeckillGoodsDTO();
+        BeanUtils.copyProperties(seckillGoodsCache.getData(), seckillGoodsDTO);
+        seckillGoodsDTO.setVersion(seckillGoodsCache.getVersion());
+        return seckillGoodsDTO;
     }
 }

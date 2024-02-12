@@ -61,4 +61,6 @@ public interface SeckillGoodsService {
      * @return
      */
     List<SeckillGoodsDTO> getSeckillGoodsList(Long activityId, Long version);
+
+    SeckillGoodsDTO getSeckillGoods(Long goodsId, Long version);
 }

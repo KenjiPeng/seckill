@@ -13,7 +13,7 @@ import java.util.List;
  **/
 public interface SeckillGoodsListCacheService extends SeckillCacheService {
 
-    SeckillBusinessCache<List<SeckillGoods>> getCachedGoodsList(Long activityId, Long version);
+    SeckillBusinessCache<List<SeckillGoods>> getSeckillGoodsList(Long activityId, Long version);
 
-    SeckillBusinessCache<List<SeckillGoods>> tryUpdateCachedGoodsCacheByLock(Long activityId);
+    SeckillBusinessCache<List<SeckillGoods>> tryUpdateSeckillGoodsListCacheByLock(Long activityId);
 }

@@ -60,7 +60,7 @@ public class SeckillGoodsListCacheServiceImpl implements SeckillGoodsListCacheSe
      * @return
      */
     @Override
-    public SeckillBusinessCache<List<SeckillGoods>> getCachedGoodsList(Long activityId, Long version) {
+    public SeckillBusinessCache<List<SeckillGoods>> getSeckillGoodsList(Long activityId, Long version) {
         SeckillBusinessCache<List<SeckillGoods>> seckillGoodsLocalCache = localCacheService.getIfPresent(activityId);
         if (seckillGoodsLocalCache != null) {
             if (version == null || seckillGoodsLocalCache.getVersion().compareTo(version) >= 0) {
@@ -75,7 +75,7 @@ public class SeckillGoodsListCacheServiceImpl implements SeckillGoodsListCacheSe
         logger.info("Get distributed cache | {}", activityId);
         SeckillBusinessCache<List<SeckillGoods>> seckillGoodsListCache = SeckillGoodsBuilder.getSeckillBusinessCacheList(distributedCacheService.getObject(buildCacheKey(activityId)), SeckillGoods.class);
         if (seckillGoodsListCache == null) {
-            seckillGoodsListCache = tryUpdateCachedGoodsCacheByLock(activityId);
+            seckillGoodsListCache = tryUpdateSeckillGoodsListCacheByLock(activityId);
         }
         if (seckillGoodsListCache != null && !seckillGoodsListCache.isRetryLater()) { // update local cache
             if (localCacheUpdateLock.tryLock()) {
@@ -95,7 +95,7 @@ public class SeckillGoodsListCacheServiceImpl implements SeckillGoodsListCacheSe
      * @return
      */
     @Override
-    public SeckillBusinessCache<List<SeckillGoods>> tryUpdateCachedGoodsCacheByLock(Long activityId) {
+    public SeckillBusinessCache<List<SeckillGoods>> tryUpdateSeckillGoodsListCacheByLock(Long activityId) {
         logger.info("Update distributed cache | {}", activityId);
         DistributedLock lock = distributedLockFactory.getDistributedLock(SECKILL_GOODS_LIST_UPDATE_CACHE_LOCK_KEY.concat(String.valueOf(activityId)));
         SeckillBusinessCache<List<SeckillGoods>> seckillGoodsListCache;
