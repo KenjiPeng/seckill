@@ -3,9 +3,9 @@ package io.kenji.seckill.interfaces.controller;
 import io.kenji.seckill.application.service.SeckillOrderService;
 import io.kenji.seckill.domain.code.HttpCode;
 import io.kenji.seckill.domain.dto.SeckillOrderDTO;
-import io.kenji.seckill.domain.model.SeckillOrder;
 import io.kenji.seckill.domain.response.ResponseMessage;
 import io.kenji.seckill.domain.response.ResponseMessageBuilder;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,8 +28,9 @@ public class SeckillOrderController {
     }
 
     @RequestMapping(value = "/saveSeckillOrder", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseMessage<SeckillOrderDTO> saveSeckillOrder(SeckillOrderDTO seckillOrderDTO) {
-        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), seckillOrderService.saveSeckillOrder(seckillOrderDTO));
+    public ResponseMessage<Long> saveSeckillOrder(@RequestAttribute Long userId, SeckillOrderDTO seckillOrderDTO) {
+        Long orderId = seckillOrderService.saveSeckillOrder(userId, seckillOrderDTO);
+        return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode(), orderId);
     }
 
     @RequestMapping(value = "/getSeckillOrderByUserId", method = {RequestMethod.GET, RequestMethod.POST})

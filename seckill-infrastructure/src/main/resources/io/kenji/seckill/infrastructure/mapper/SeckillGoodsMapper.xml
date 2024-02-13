@@ -30,21 +30,32 @@
     </insert>
 
     <select id="getSeckillGoodsByGoodsId" resultMap="baseResultMap">
-        select <include refid="Base_Column_List"/> from seckill.seckill_goods where id = #{goodsId}
+        select
+        <include refid="Base_Column_List"/>
+        from seckill.seckill_goods where id = #{goodsId}
     </select>
 
     <select id="getSeckillGoodsListByActivityId" resultMap="baseResultMap">
-        select <include refid="Base_Column_List"/> from seckill.seckill_goods where activity_id = #{activityId}
+        select
+        <include refid="Base_Column_List"/>
+        from seckill.seckill_goods where activity_id = #{activityId}
     </select>
 
-    <update id="updateSeckillGoodsStatus" >
-        update seckill.seckill_goods set status = #{status} where id = #{goodsId}
+    <update id="updateSeckillGoodsStatus">
+        update seckill.seckill_goods
+        set status = #{status}
+        where id = #{goodsId}
     </update>
 
     <update id="updateAvailableStock">
-        update seckill.seckill_goods set available_stock = #{count} where id = #{goodsId}
+        update seckill.seckill_goods
+        set available_stock = available_stock - #{count}
+        where id = #{goodsId}
+          and available_stock >= #{count}
     </update>
     <select id="getAvailableStockByGoodsId" resultMap="baseResultMap">
-        select available_stock from seckill.seckill_goods where id = #{goodsId}
+        select available_stock
+        from seckill.seckill_goods
+        where id = #{goodsId}
     </select>
 </mapper>

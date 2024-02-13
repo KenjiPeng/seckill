@@ -1,7 +1,6 @@
 package io.kenji.seckill.application.service;
 
 import io.kenji.seckill.domain.dto.SeckillOrderDTO;
-import io.kenji.seckill.domain.model.SeckillOrder;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface SeckillOrderService {
      * @param seckillOrderDTO
      * @return
      */
-    SeckillOrderDTO saveSeckillOrder(SeckillOrderDTO seckillOrderDTO);
+    Long saveSeckillOrder(Long userId,SeckillOrderDTO seckillOrderDTO);
 
     /**
      * Get seckill order by user id

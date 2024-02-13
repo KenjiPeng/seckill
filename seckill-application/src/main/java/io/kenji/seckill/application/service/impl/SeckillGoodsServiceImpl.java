@@ -29,10 +29,6 @@ import java.util.stream.Collectors;
 @Service
 public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
-//    private final SeckillGoodsRepository seckillGoodsRepository;
-
-//    private final SeckillActivityRepository seckillActivityRepository;
-
     private final SeckillGoodsDomainService seckillGoodsDomainService;
 
     private final SeckillActivityDomainService seckillActivityDomainService;
@@ -40,6 +36,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     private final SeckillGoodsListCacheService seckillGoodsListCacheService;
 
     private final SeckillGoodsCacheService seckillGoodsCacheService;
+
 
     public SeckillGoodsServiceImpl(SeckillGoodsDomainService seckillGoodsDomainService, SeckillActivityDomainService seckillActivityDomainService, SeckillGoodsListCacheService seckillGoodsListCacheService, SeckillGoodsCacheService seckillGoodsCacheService) {
         this.seckillGoodsDomainService = seckillGoodsDomainService;
@@ -116,11 +113,11 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void updateAvailableStock(Integer count, Long goodsId) {
+    public boolean updateAvailableStock(Integer count, Long goodsId) {
         if (ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(goodsId)) {
             throw new SeckillException(HttpCode.PARAMS_INVALID);
         }
-         seckillGoodsDomainService.updateAvailableStock(count, goodsId);
+        return seckillGoodsDomainService.updateAvailableStock(count, goodsId);
     }
 
     /**

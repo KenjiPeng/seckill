@@ -45,7 +45,7 @@ public interface SeckillGoodsDomainService {
      * @param goodsId
      * @return
      */
-    void updateAvailableStock(Integer count,Long goodsId);
+    boolean updateAvailableStock(Integer count,Long goodsId);
 
     /**
      * Get available stock by goods id

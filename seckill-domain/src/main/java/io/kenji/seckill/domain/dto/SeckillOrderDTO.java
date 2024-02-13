@@ -51,15 +51,25 @@ public class SeckillOrderDTO implements Serializable {
      * 1: created 2: paid 0: canceled -1: deleted
      */
     private Integer status;
+
     /**
      * Create time
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8:00")
     private Date createTime;
-
     public Long getId() {
         return id;
+    }
+
+    private Long version;
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public void setId(Long id) {

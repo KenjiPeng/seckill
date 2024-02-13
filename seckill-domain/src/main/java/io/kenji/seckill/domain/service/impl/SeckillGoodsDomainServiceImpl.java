@@ -96,17 +96,18 @@ public class SeckillGoodsDomainServiceImpl implements SeckillGoodsDomainService 
      * @param goodsId
      */
     @Override
-    public void updateAvailableStock(Integer count, Long goodsId) {
+    public boolean updateAvailableStock(Integer count, Long goodsId) {
         logger.info("Update seckill goods available stock, count: {}, goods id: {}", count, goodsId);
         if (count == null || count < 0 || goodsId == null) {
             throw new SeckillException(HttpCode.PARAMS_INVALID);
         }
         SeckillGoods seckillGoods = seckillGoodsRepository.getSeckillGoodsByGoodsId(goodsId);
-        seckillGoodsRepository.updateAvailableStock(count, goodsId);
+        Integer updatedCount = seckillGoodsRepository.updateAvailableStock(count, goodsId);
         logger.info("Updated seckill goods available stock, count: {}, goods id: {}", count, goodsId);
         SeckillGoodsEvent seckillGoodsEvent = new SeckillGoodsEvent(goodsId, seckillGoods.getStatus(), seckillGoods.getActivityId());
         eventPublisher.publish(seckillGoodsEvent);
         logger.info("Published seckill goods event, id: {}", goodsId);
+        return updatedCount==1;
     }
 
     /**

@@ -27,7 +27,7 @@ public class SeckillGoodsController {
     }
 
     @RequestMapping(value = "/saveSeckillGoods", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseMessage<String> saveSeckillGoods(SeckillGoodsDTO seckillGoodsDTO) {
+    public ResponseMessage<String> saveSeckillGoods( SeckillGoodsDTO seckillGoodsDTO) {
         seckillGoodsService.saveSeckillGoods(seckillGoodsDTO);
         return ResponseMessageBuilder.build(HttpCode.SUCCESS.getCode());
     }
