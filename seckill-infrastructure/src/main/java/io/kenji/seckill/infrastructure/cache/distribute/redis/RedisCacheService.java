@@ -89,7 +89,7 @@ public class RedisCacheService implements DistributedCacheService {
         Object result = redisTemplate.opsForValue().get(key);
         if (result == null) return null;
         try {
-            return JSON.parseObject((String) result, targetClass);
+            return JSON.parseObject(String.valueOf(result), targetClass);
         } catch (Exception e) {
             return null;
         }
@@ -148,5 +148,25 @@ public class RedisCacheService implements DistributedCacheService {
     @Override
     public Boolean hasKey(String key) {
         return redisTemplate.hasKey(key);
+    }
+
+    /**
+     * @param key
+     * @param delta
+     * @return
+     */
+    @Override
+    public Long decrement(String key, long delta) {
+        return redisTemplate.opsForValue().decrement(key, delta);
+    }
+
+    /**
+     * @param key
+     * @param delta
+     * @return
+     */
+    @Override
+    public Long increment(String key, long delta) {
+        return redisTemplate.opsForValue().increment(key, delta);
     }
 }

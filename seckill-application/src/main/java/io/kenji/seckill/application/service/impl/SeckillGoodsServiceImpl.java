@@ -5,6 +5,7 @@ import io.kenji.seckill.application.cache.service.goods.SeckillGoodsCacheService
 import io.kenji.seckill.application.cache.service.goods.SeckillGoodsListCacheService;
 import io.kenji.seckill.application.service.SeckillGoodsService;
 import io.kenji.seckill.domain.code.HttpCode;
+import io.kenji.seckill.domain.constants.SeckillConstants;
 import io.kenji.seckill.domain.dto.SeckillGoodsDTO;
 import io.kenji.seckill.domain.enums.SeckillGoodsStatus;
 import io.kenji.seckill.domain.exception.SeckillException;
@@ -12,6 +13,7 @@ import io.kenji.seckill.domain.model.SeckillActivity;
 import io.kenji.seckill.domain.model.SeckillGoods;
 import io.kenji.seckill.domain.service.SeckillActivityDomainService;
 import io.kenji.seckill.domain.service.SeckillGoodsDomainService;
+import io.kenji.seckill.infrastructure.cache.distribute.DistributedCacheService;
 import io.kenji.seckill.infrastructure.utils.id.SnowFlakeFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -37,12 +39,15 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     private final SeckillGoodsCacheService seckillGoodsCacheService;
 
+    private final DistributedCacheService distributedCacheService;
 
-    public SeckillGoodsServiceImpl(SeckillGoodsDomainService seckillGoodsDomainService, SeckillActivityDomainService seckillActivityDomainService, SeckillGoodsListCacheService seckillGoodsListCacheService, SeckillGoodsCacheService seckillGoodsCacheService) {
+
+    public SeckillGoodsServiceImpl(SeckillGoodsDomainService seckillGoodsDomainService, SeckillActivityDomainService seckillActivityDomainService, SeckillGoodsListCacheService seckillGoodsListCacheService, SeckillGoodsCacheService seckillGoodsCacheService, DistributedCacheService distributedCacheService) {
         this.seckillGoodsDomainService = seckillGoodsDomainService;
         this.seckillActivityDomainService = seckillActivityDomainService;
         this.seckillGoodsListCacheService = seckillGoodsListCacheService;
         this.seckillGoodsCacheService = seckillGoodsCacheService;
+        this.distributedCacheService = distributedCacheService;
     }
 
     /**
@@ -64,7 +69,16 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         seckillGoods.setAvailableStock(seckillGoodsDTO.getInitialStock());
         seckillGoods.setStatus(SeckillGoodsStatus.PUBLISHED.getCode());
         seckillGoods.setId(SnowFlakeFactory.getSnowFlakeFromCache().nextId());
-        seckillGoodsDomainService.saveSeckillGoods(seckillGoods);
+        String key = SeckillConstants.getKey(SeckillConstants.GOODS_ITEM_STOCK_KEY_PREFIX, String.valueOf(seckillGoods.getId()));
+        try {
+            distributedCacheService.put(key,seckillGoods.getAvailableStock());
+            seckillGoodsDomainService.saveSeckillGoods(seckillGoods);
+        }catch (Exception e){
+            if (distributedCacheService.hasKey(key)){
+                distributedCacheService.delete(key);
+            }
+            throw e;
+        }
     }
 
     /**

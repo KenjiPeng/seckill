@@ -10,6 +10,15 @@ public class SeckillConstants {
      * User cache prefix
      */
     public static final String USER_KEY_PREFIX = "user_";
+    /**
+     * Order lock key prefix
+     */
+    public static final String ORDER_LOCK_KEY_PREFIX = "order:lock:";
+    /**
+     * Goods item stock key prefix
+     */
+    public static final String GOODS_ITEM_STOCK_KEY_PREFIX = "item:stock:";
+
 
     /**
      * Get key

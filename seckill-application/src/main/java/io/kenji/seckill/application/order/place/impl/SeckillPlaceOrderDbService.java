@@ -10,6 +10,7 @@ import io.kenji.seckill.domain.model.SeckillOrder;
 import io.kenji.seckill.domain.service.SeckillOrderDomainService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Kenji Peng
@@ -34,6 +35,7 @@ public class SeckillPlaceOrderDbService implements SeckillPlaceOrderService {
      * @param seckillOrderDTO
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO) {
         SeckillGoodsDTO seckillGoods = seckillGoodsService.getSeckillGoods(seckillOrderDTO.getGoodsId(), seckillOrderDTO.getVersion());

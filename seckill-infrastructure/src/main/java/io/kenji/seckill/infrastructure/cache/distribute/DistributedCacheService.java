@@ -19,4 +19,12 @@ public interface DistributedCacheService {
     <T> List<T> getList(String key,Class<T> targetClass);
     Boolean delete(String key);
     Boolean hasKey(String key);
+
+    default Long decrement(String key,long delta){
+        return null;
+    }
+
+    default Long increment(String key,long delta){
+        return null;
+    }
 }
