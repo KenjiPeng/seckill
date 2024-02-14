@@ -27,4 +27,12 @@ public interface DistributedCacheService {
     default Long increment(String key,long delta){
         return null;
     }
+
+    default Long decrementByLua(String key,Integer quantity){return null;}
+
+    default Long incrementByLua(String key,Integer quantity){return null;}
+
+    default Long initByLua(String key,Integer quantity){return null;}
+
+    default void checkResult(Long result){}
 }

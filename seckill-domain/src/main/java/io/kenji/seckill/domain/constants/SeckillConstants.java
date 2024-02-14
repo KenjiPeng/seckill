@@ -19,6 +19,20 @@ public class SeckillConstants {
      */
     public static final String GOODS_ITEM_STOCK_KEY_PREFIX = "item:stock:";
 
+    /**
+     * LUA result goods stock is not existing
+     */
+    public static final int LUA_RESULT_GOODS_STOCK_NOT_EXISTS = -1;
+
+    /**
+     * LUA goods param is less than 0
+     */
+    public static final int LUA_RESULT_GOODS_STOCK_PARAMS_LT_ZERO = -2;
+
+    /**
+     * LUA available stock is less than 0
+     */
+    public static final int LUA_RESULT_GOODS_STOCK_LT_ZERO = -3;
 
     /**
      * Get key

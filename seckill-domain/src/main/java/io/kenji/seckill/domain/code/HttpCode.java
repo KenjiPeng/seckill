@@ -24,7 +24,10 @@ public enum HttpCode {
     DATA_PARSE_FAILED(2015, "Data parse failed"),
     RETRY_LATER(2016, "Retry later"),
     USER_INVALID(2017, "Current account has exception, can not join activity"),
-    GOODS_PUBLISHED(2018, "Goods is not online");
+    GOODS_PUBLISHED(2018, "Goods is not online"),
+    ORDER_FAILED(2019, "Failed to order"),
+
+    STOCK_IS_NULL(2020, "Stock is null");
 
     private final Integer code;
     private final String message;
