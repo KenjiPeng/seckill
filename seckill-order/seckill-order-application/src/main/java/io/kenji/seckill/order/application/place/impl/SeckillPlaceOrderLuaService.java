@@ -9,8 +9,11 @@ import io.kenji.seckill.order.application.place.SeckillPlaceOrderService;
 import io.kenji.seckill.order.domain.model.entity.SeckillOrder;
 import io.kenji.seckill.order.domain.service.SeckillOrderDomainService;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Kenji Peng
@@ -21,7 +24,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
 
-    //    private final SeckillGoodsService seckillGoodsService;
+    private final Logger logger = LoggerFactory.getLogger(SeckillPlaceOrderLuaService.class);
+
     @DubboReference(version = "1.0.0")
     private SeckillGoodsDubboService seckillGoodsDubboService;
     private final DistributedCacheService distributedCacheService;
@@ -30,7 +34,6 @@ public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
 
 
     public SeckillPlaceOrderLuaService(DistributedCacheService distributedCacheService, SeckillOrderDomainService seckillOrderDomainService) {
-//        this.seckillGoodsService = seckillGoodsService;
         this.distributedCacheService = distributedCacheService;
         this.seckillOrderDomainService = seckillOrderDomainService;
     }
@@ -40,6 +43,7 @@ public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
      * @param seckillOrderDTO
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO) {
         boolean decrementStock = false;
@@ -53,8 +57,10 @@ public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
             seckillOrderDomainService.saveSeckillOrder(seckillOrder);
             seckillGoodsDubboService.updateAvailableStock(seckillOrder.getQuantity(), seckillOrderDTO.getGoodsId());
             decrementStock = true;
+            int i = 1 / 0;
             return seckillOrder.getId();
         } catch (Exception e) {
+            logger.error("Hit exception whilst place order, roll back", e);
             if (decrementStock) {
                 distributedCacheService.incrementByLua(key, seckillOrderDTO.getQuantity());
             }

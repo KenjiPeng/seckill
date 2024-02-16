@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="io.kenji.seckill.infrastructure.mapper.SeckillActivityMapper">
+<mapper namespace="io.kenji.seckill.activity.infrastructure.mapper.SeckillActivityMapper">
 
-    <resultMap id="baseResultMap" type="io.kenji.seckill.domain.model.SeckillActivity">
+    <resultMap id="baseResultMap" type="io.kenji.seckill.activity.domain.model.entity.SeckillActivity">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="activity_name" property="activityName" jdbcType="VARCHAR"/>
         <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
@@ -14,7 +14,7 @@
     <sql id="Base_Column_List">
         id, activity_name, start_time, end_time,status,activity_desc
     </sql>
-    <insert id="saveSeckillActivity" parameterType="io.kenji.seckill.domain.model.SeckillActivity">
+    <insert id="saveSeckillActivity" parameterType="io.kenji.seckill.activity.domain.model.entity.SeckillActivity">
         insert into seckill_activity(<include refid="Base_Column_List"/>) values
         (#{id},#{activityName},#{startTime},#{endTime},#{status},#{activityDesc})
     </insert>

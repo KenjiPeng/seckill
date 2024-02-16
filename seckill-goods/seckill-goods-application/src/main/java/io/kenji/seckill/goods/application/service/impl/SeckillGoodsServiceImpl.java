@@ -67,7 +67,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
             throw new SeckillException(ErrorCode.PARAMS_INVALID);
         }
 //        SeckillActivity seckillActivity = seckillActivityDomainService.getSeckillActivityById(seckillGoodsDTO.getActivityId());
-        SeckillActivityDTO seckillActivity = seckillActivityDubboService.getSeckillActivity(seckillGoodsDTO.getId(), seckillGoodsDTO.getVersion());
+        SeckillActivityDTO seckillActivity = seckillActivityDubboService.getSeckillActivity(seckillGoodsDTO.getActivityId(), seckillGoodsDTO.getVersion());
         if (ObjectUtils.isEmpty(seckillActivity)) throw new SeckillException(ErrorCode.ACTIVITY_NOT_EXISTS);
         SeckillGoods seckillGoods = new SeckillGoods();
         BeanUtils.copyProperties(seckillGoodsDTO, seckillGoods);
