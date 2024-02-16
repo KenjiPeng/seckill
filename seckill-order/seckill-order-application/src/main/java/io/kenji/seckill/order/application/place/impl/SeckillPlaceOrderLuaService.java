@@ -10,12 +10,12 @@ import io.kenji.seckill.dubbo.interfaces.goods.SeckillGoodsDubboService;
 import io.kenji.seckill.order.application.place.SeckillPlaceOrderService;
 import io.kenji.seckill.order.domain.model.entity.SeckillOrder;
 import io.kenji.seckill.order.domain.service.SeckillOrderDomainService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Kenji Peng
@@ -46,7 +46,9 @@ public class SeckillPlaceOrderLuaService extends SeckillPlaceOrderBaseService im
      * @param seckillOrderDTO
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
+    //    @HmilyTCC(confirmMethod = "confirmMethod", cancelMethod = "cancelMethod")
+    @GlobalTransactional(rollbackFor = Exception.class)
     @Override
     public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO, Long txNo) {
         String txTryKey = SeckillConstants.getKey(SeckillConstants.ORDER_TRY_KEY_PREFIX, SeckillConstants.ORDER_KEY);

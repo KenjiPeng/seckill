@@ -21,5 +21,15 @@
             <artifactId>seckill-dubbo-interfaces</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <version>${seata.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <version>${spring-cloud-alibaba.version}</version>
+        </dependency>
     </dependencies>
 </project>
