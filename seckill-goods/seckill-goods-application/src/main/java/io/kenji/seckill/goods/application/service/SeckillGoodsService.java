@@ -64,4 +64,6 @@ public interface SeckillGoodsService {
     List<SeckillGoodsDTO> getSeckillGoodsList(Long activityId, Long version);
 
     SeckillGoodsDTO getSeckillGoods(Long goodsId, Long version);
+
+    boolean increaseAvailableStock(Integer count, Long id);
 }

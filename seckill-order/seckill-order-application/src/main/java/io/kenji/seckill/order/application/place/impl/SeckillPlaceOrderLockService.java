@@ -14,6 +14,7 @@ import io.kenji.seckill.order.application.place.SeckillPlaceOrderService;
 import io.kenji.seckill.order.domain.model.entity.SeckillOrder;
 import io.kenji.seckill.order.domain.service.SeckillOrderDomainService;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.dromara.hmily.annotation.HmilyTCC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,12 +30,11 @@ import java.util.concurrent.TimeUnit;
  **/
 @ConditionalOnProperty(name = "place.order.type", havingValue = "lock")
 @Service
-public class SeckillPlaceOrderLockService implements SeckillPlaceOrderService {
+public class SeckillPlaceOrderLockService extends SeckillPlaceOrderBaseService implements SeckillPlaceOrderService {
 
     private final Logger logger = LoggerFactory.getLogger(SeckillPlaceOrderLockService.class);
 
-    //    private final SeckillGoodsService seckillGoodsService;
-    @DubboReference(version = "1.0.0")
+    @DubboReference(version = "1.0.0",check = false)
     private SeckillGoodsDubboService seckillGoodsDubboService;
     private final DistributedLockFactory distributedLockFactory;
 
@@ -43,7 +43,7 @@ public class SeckillPlaceOrderLockService implements SeckillPlaceOrderService {
     private final SeckillOrderDomainService seckillOrderDomainService;
 
     public SeckillPlaceOrderLockService(DistributedLockFactory distributedLockFactory, DistributedCacheService distributedCacheService, SeckillOrderDomainService seckillOrderDomainService) {
-//        this.seckillGoodsService = seckillGoodsService;
+        super(distributedCacheService,seckillOrderDomainService);
         this.distributedLockFactory = distributedLockFactory;
         this.distributedCacheService = distributedCacheService;
         this.seckillOrderDomainService = seckillOrderDomainService;
@@ -55,8 +55,21 @@ public class SeckillPlaceOrderLockService implements SeckillPlaceOrderService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
+    @HmilyTCC(confirmMethod = "confirmMethod", cancelMethod = "cancelMethod")
     @Override
-    public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO) {
+    public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO, Long txNo) {
+        String txTryKey = SeckillConstants.getKey(SeckillConstants.ORDER_TRY_KEY_PREFIX, SeckillConstants.ORDER_KEY);
+        // Idempotent processing
+        if (distributedCacheService.isMemberSet(txTryKey, txNo)) {
+            logger.warn("updateAvailableStock | already invoked try method, txNo: {}", txNo);
+            return txNo;
+        }
+        // In case null rollback or suspend
+        if (distributedCacheService.isMemberSet(SeckillConstants.getKey(SeckillConstants.ORDER_CONFIRM_KEY_PREFIX, SeckillConstants.ORDER_KEY), txNo) ||
+                distributedCacheService.isMemberSet(SeckillConstants.getKey(SeckillConstants.ORDER_CANCEL_KEY_PREFIX, SeckillConstants.ORDER_KEY), txNo)) {
+            logger.warn("updateAvailableStock | already invoked confirm method or cancel method, txNo: {}", txNo);
+            return txNo;
+        }
         SeckillGoodsDTO seckillGoods = seckillGoodsDubboService.getSeckillGoods(seckillOrderDTO.getGoodsId(), seckillOrderDTO.getVersion());
         //check
         this.checkSeckillGoods(seckillOrderDTO, seckillGoods);
@@ -66,6 +79,7 @@ public class SeckillPlaceOrderLockService implements SeckillPlaceOrderService {
         DistributedLock lock = distributedLockFactory.getDistributedLock(distributedLockKey);
         String key = SeckillConstants.getKey(SeckillConstants.GOODS_ITEM_STOCK_KEY_PREFIX, String.valueOf(seckillOrderDTO.getGoodsId()));
         boolean isDecrementCacheStock = false;
+        boolean isSaveTryLog = false;
         try {
             if (!lock.tryLock(2, 5, TimeUnit.SECONDS)) {
                 throw new SeckillException(ErrorCode.RETRY_LATER);
@@ -84,19 +98,28 @@ public class SeckillPlaceOrderLockService implements SeckillPlaceOrderService {
             isDecrementCacheStock = true;
             //build order
             SeckillOrder seckillOrder = this.buildSeckillOrder(userId, seckillOrderDTO, seckillGoods);
+            seckillOrder.setId(txNo);
             seckillOrderDomainService.saveSeckillOrder(seckillOrder);
-            seckillGoodsDubboService.updateAvailableStock(quantity, seckillOrder.getGoodsId());
+            distributedCacheService.addSet(txTryKey, txNo);
+            isSaveTryLog = true;
+            seckillGoodsDubboService.updateAvailableStock(quantity, seckillOrder.getGoodsId(),txNo);
             return seckillOrder.getId();
         } catch (Exception e) {
             if (isDecrementCacheStock) {
                 distributedCacheService.increment(key, seckillOrderDTO.getQuantity());
             }
+            if (isSaveTryLog) {
+                distributedCacheService.removeSet(txTryKey, txNo);
+            }
             if (e instanceof InterruptedException) {
                 logger.error("Hit InterruptedException whilst place order | seckillOrderDTO: {}", JSON.toJSONString(seckillOrderDTO), e);
+            } else if (e instanceof SeckillException) {
+                logger.error("Hit exception whist order", e);
+                throw new SeckillException(e.getMessage());
             } else {
                 logger.error("Hit exception whilst place order | seckillOrderDTO: {}", JSON.toJSONString(seckillOrderDTO), e);
             }
-            throw new SeckillException(e.getMessage());
+            throw new SeckillException(ErrorCode.ORDER_FAILED);
         } finally {
             lock.unlock();
         }

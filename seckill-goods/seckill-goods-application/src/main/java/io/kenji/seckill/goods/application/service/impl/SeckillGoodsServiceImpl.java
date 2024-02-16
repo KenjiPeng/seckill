@@ -37,7 +37,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     private final SeckillGoodsDomainService seckillGoodsDomainService;
 
     //    private final SeckillActivityDomainService seckillActivityDomainService;
-    @DubboReference(version = "1.0.0")
+    @DubboReference(version = "1.0.0", check = false)
     private SeckillActivityDubboService seckillActivityDubboService;
     private final SeckillGoodsListCacheService seckillGoodsListCacheService;
 
@@ -208,5 +208,15 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         BeanUtils.copyProperties(seckillGoodsCache.getData(), seckillGoodsDTO);
         seckillGoodsDTO.setVersion(seckillGoodsCache.getVersion());
         return seckillGoodsDTO;
+    }
+
+    /**
+     * @param count
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean increaseAvailableStock(Integer count, Long id) {
+        return seckillGoodsDomainService.increaseAvailableStock(count,id);
     }
 }

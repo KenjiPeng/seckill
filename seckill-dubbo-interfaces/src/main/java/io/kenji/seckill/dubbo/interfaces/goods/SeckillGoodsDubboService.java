@@ -1,6 +1,7 @@
 package io.kenji.seckill.dubbo.interfaces.goods;
 
 import io.kenji.seckill.common.model.dto.SeckillGoodsDTO;
+import org.dromara.hmily.annotation.Hmily;
 
 /**
  * @Author Kenji Peng
@@ -23,5 +24,6 @@ public interface SeckillGoodsDubboService {
      * @param id
      * @return
      */
-    boolean updateAvailableStock(Integer count, Long id);
+    @Hmily
+    boolean updateAvailableStock(Integer count, Long id, Long txNo);
 }

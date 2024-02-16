@@ -32,4 +32,5 @@ public interface SeckillOrderDomainService {
      */
     List<SeckillOrder> getSeckillOrderByActivityId(Long activityId);
 
+    Boolean deleteSeckillOrder(Long orderId);
 }

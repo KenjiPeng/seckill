@@ -30,7 +30,7 @@ public class SeckillOrderRepositoryImpl implements SeckillOrderRepository {
      */
     @Override
     public Integer saveSeckillOrder(SeckillOrder seckillOrder) {
-        if (ObjectUtils.isEmpty(seckillOrder)){
+        if (ObjectUtils.isEmpty(seckillOrder)) {
             throw new SeckillException(ErrorCode.PARAMS_INVALID);
         }
         return seckillOrderMapper.saveSeckillOrder(seckillOrder);
@@ -52,5 +52,14 @@ public class SeckillOrderRepositoryImpl implements SeckillOrderRepository {
     @Override
     public List<SeckillOrder> getSeckillOrderByActivityId(Long activityId) {
         return seckillOrderMapper.getSeckillOrderByActivityId(activityId);
+    }
+
+    /**
+     * @param orderId
+     * @return
+     */
+    @Override
+    public boolean deleteSeckillOrder(Long orderId) {
+        return seckillOrderMapper.deleteSeckillOrder(orderId) == 1;
     }
 }

@@ -22,7 +22,7 @@ import java.util.Objects;
  **/
 public interface SeckillPlaceOrderService {
 
-    Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO);
+    Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO, Long txNo);
 
     default SeckillOrder buildSeckillOrder(Long userId, SeckillOrderDTO seckillOrderDTO, SeckillGoodsDTO seckillGoodsDTO) {
         SeckillOrder seckillOrder = new SeckillOrder();

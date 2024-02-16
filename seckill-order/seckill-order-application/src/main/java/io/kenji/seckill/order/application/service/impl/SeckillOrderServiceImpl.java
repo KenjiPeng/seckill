@@ -3,6 +3,7 @@ package io.kenji.seckill.order.application.service.impl;
 import io.kenji.seckill.common.exception.ErrorCode;
 import io.kenji.seckill.common.exception.SeckillException;
 import io.kenji.seckill.common.model.dto.SeckillOrderDTO;
+import io.kenji.seckill.common.utils.id.SnowFlakeFactory;
 import io.kenji.seckill.order.application.place.SeckillPlaceOrderService;
 import io.kenji.seckill.order.application.service.SeckillOrderService;
 import io.kenji.seckill.order.domain.model.entity.SeckillOrder;
@@ -26,7 +27,7 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     private final SeckillPlaceOrderService seckillPlaceOrderService;
 
-    public SeckillOrderServiceImpl(SeckillOrderDomainService seckillOrderDomainService,  SeckillPlaceOrderService seckillPlaceOrderService) {
+    public SeckillOrderServiceImpl(SeckillOrderDomainService seckillOrderDomainService, SeckillPlaceOrderService seckillPlaceOrderService) {
         this.seckillOrderDomainService = seckillOrderDomainService;
         this.seckillPlaceOrderService = seckillPlaceOrderService;
     }
@@ -38,34 +39,7 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     @Override
     public Long saveSeckillOrder(Long userId, SeckillOrderDTO seckillOrderDTO) {
         if (ObjectUtils.isEmpty(seckillOrderDTO)) throw new SeckillException(ErrorCode.PARAMS_INVALID);
-//        SeckillGoodsDTO seckillGoodsDTO = seckillGoodsService.getSeckillGoodsByGoodsId(seckillOrderDTO.getGoodsId());
-//        if (ObjectUtils.isEmpty(seckillGoodsDTO)) throw new SeckillException(HttpCode.GOODS_NOT_EXISTS);
-//        if (Objects.equals(seckillGoodsDTO.getStatus(), SeckillGoodsStatus.PUBLISHED.getCode()))
-//            throw new SeckillException(HttpCode.GOODS_PUBLISHED);
-//        if (Objects.equals(seckillGoodsDTO.getStatus(), SeckillGoodsStatus.OFFLINE.getCode()))
-//            throw new SeckillException(HttpCode.GOODS_OFFLINE);
-//        if (seckillGoodsDTO.getLimitNum() < seckillOrderDTO.getQuantity())
-//            throw new SeckillException(HttpCode.BEYOND_LIMIT_NUM);
-//        final Integer availableStock = seckillGoodsDTO.getAvailableStock();
-//        if (ObjectUtils.isEmpty(availableStock) ||
-//                availableStock <= 0 ||
-//                availableStock < seckillOrderDTO.getQuantity()) {
-//            throw new SeckillException(HttpCode.STOCK_LT_ZERO);
-//        }
-//        SeckillOrder seckillOrder = new SeckillOrder();
-//        seckillOrderDTO.setId(SnowFlakeFactory.getSnowFlakeFromCache().nextId());
-//        seckillOrderDTO.setOrderPrice(seckillGoodsDTO.getActivityPrice().multiply(BigDecimal.valueOf(seckillOrderDTO.getQuantity())));
-//        seckillOrderDTO.setCreateTime(new Date());
-//        seckillOrderDTO.setActivityPrice(seckillGoodsDTO.getActivityPrice());
-//        seckillOrderDTO.setStatus(SeckillOrderStatus.CREATED.getCode());
-//        seckillOrderDTO.setGoodsName(seckillGoodsDTO.getGoodsName());
-//        BeanUtils.copyProperties(seckillOrderDTO, seckillOrder);
-//        //save order
-//        seckillOrderDomainService.saveSeckillOrder(seckillOrder);
-//        //update stock
-//        seckillGoodsService.updateAvailableStock(seckillGoodsDTO.getAvailableStock() - seckillOrderDTO.getQuantity(), seckillOrderDTO.getGoodsId());
-        return seckillPlaceOrderService.placeOrder(userId,seckillOrderDTO);
-//        return seckillOrderDTO;
+        return seckillPlaceOrderService.placeOrder(userId, seckillOrderDTO, SnowFlakeFactory.getSnowFlakeFromCache().nextId());
     }
 
     /**
@@ -85,6 +59,15 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     @Override
     public List<SeckillOrderDTO> getSeckillOrderByActivityId(Long activityId) {
         return seckillOrderDomainService.getSeckillOrderByActivityId(activityId).stream().map(this::seckillOrderConverterToSeckillOrderDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean deleteSeckillOrder(Long orderId) {
+        return seckillOrderDomainService.deleteSeckillOrder(orderId);
     }
 
     private SeckillOrderDTO seckillOrderConverterToSeckillOrderDTO(SeckillOrder seckillOrder) {

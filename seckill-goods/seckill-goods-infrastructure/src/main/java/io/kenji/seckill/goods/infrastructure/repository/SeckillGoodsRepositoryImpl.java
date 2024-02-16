@@ -30,7 +30,7 @@ public class SeckillGoodsRepositoryImpl implements SeckillGoodsRepository {
      */
     @Override
     public Integer saveSeckillGoods(SeckillGoods seckillGoods) {
-        if (ObjectUtils.isEmpty(seckillGoods)){
+        if (ObjectUtils.isEmpty(seckillGoods)) {
             throw new SeckillException(ErrorCode.PARAMS_INVALID);
         }
         return seckillGoodsMapper.saveSeckillGoods(seckillGoods);
@@ -61,7 +61,7 @@ public class SeckillGoodsRepositoryImpl implements SeckillGoodsRepository {
      */
     @Override
     public Integer updateSeckillGoodsStatus(Integer status, Long goodsId) {
-        return seckillGoodsMapper.updateSeckillGoodsStatus(status,goodsId);
+        return seckillGoodsMapper.updateSeckillGoodsStatus(status, goodsId);
     }
 
     /**
@@ -71,7 +71,7 @@ public class SeckillGoodsRepositoryImpl implements SeckillGoodsRepository {
      */
     @Override
     public Integer updateAvailableStock(Integer count, Long goodsId) {
-        return seckillGoodsMapper.updateAvailableStock(count,goodsId);
+        return seckillGoodsMapper.updateAvailableStock(count, goodsId);
     }
 
     /**
@@ -81,5 +81,15 @@ public class SeckillGoodsRepositoryImpl implements SeckillGoodsRepository {
     @Override
     public Integer getAvailableStockByGoodsId(Long goodsId) {
         return seckillGoodsMapper.getAvailableStockByGoodsId(goodsId);
+    }
+
+    /**
+     * @param count
+     * @param id
+     * @return
+     */
+    @Override
+    public Integer increaseAvailableStock(Integer count, Long id) {
+        return seckillGoodsMapper.increaseAvailableStock(count, id);
     }
 }

@@ -62,6 +62,31 @@ public class SeckillConstants {
      * JWT private key
      */
     public static final String JWT_SECRET = "a814edb0e7c1ba4c";
+
+    /**
+     * Goods key
+     */
+    public static final String GOODS_KEY = "goods";
+    /**
+     * Order key
+     */
+    public static final String ORDER_KEY = "order";
+
+    /**
+     * tcc try
+     */
+    public static final String ORDER_TRY_KEY_PREFIX = "order:try:";
+
+    /**
+     * tcc confirm
+     */
+    public static final String ORDER_CONFIRM_KEY_PREFIX = "order:confirm:";
+
+    /**
+     * tcc cancel
+     */
+    public static final String ORDER_CANCEL_KEY_PREFIX = "order:cancel:";
+
     /**
      * Cache config
      */

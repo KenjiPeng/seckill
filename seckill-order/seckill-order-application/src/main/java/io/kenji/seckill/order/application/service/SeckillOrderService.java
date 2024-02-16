@@ -32,4 +32,10 @@ public interface SeckillOrderService {
      * @return
      */
     List<SeckillOrderDTO> getSeckillOrderByActivityId(Long activityId);
+
+    /**
+     * Delete order for roll back(TCC transaction)
+     * @param orderId
+     */
+    Boolean deleteSeckillOrder(Long orderId);
 }

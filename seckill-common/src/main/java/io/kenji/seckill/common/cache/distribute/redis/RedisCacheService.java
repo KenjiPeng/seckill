@@ -2,9 +2,6 @@ package io.kenji.seckill.common.cache.distribute.redis;
 
 import com.alibaba.fastjson.JSON;
 import io.kenji.seckill.common.cache.distribute.DistributedCacheService;
-import io.kenji.seckill.common.constants.SeckillConstants;
-import io.kenji.seckill.common.exception.ErrorCode;
-import io.kenji.seckill.common.exception.SeckillException;
 import io.kenji.seckill.common.utils.serializer.ProtoStuffSerializerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -228,19 +225,34 @@ public class RedisCacheService implements DistributedCacheService {
         return redisTemplate.execute(INIT_STOCK_SCRIPT, Collections.singletonList(key), quantity);
     }
 
+
     /**
-     * @param result
+     * @param key
+     * @param o
+     * @return
      */
     @Override
-    public void checkResult(Long result) {
-        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_NOT_EXISTS) {
-            throw new SeckillException(ErrorCode.STOCK_IS_NULL);
-        }
-        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_PARAMS_LT_ZERO) {
-            throw new SeckillException(ErrorCode.PARAMS_INVALID);
-        }
-        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_LT_ZERO) {
-            throw new SeckillException(ErrorCode.STOCK_LT_ZERO);
-        }
+    public Boolean isMemberSet(String key, Object o) {
+        return redisTemplate.opsForSet().isMember(key, o);
+    }
+
+    /**
+     * @param key
+     * @param values
+     * @return
+     */
+    @Override
+    public Long addSet(String key, Object... values) {
+        return redisTemplate.opsForSet().add(key,values);
+    }
+
+    /**
+     * @param key
+     * @param values
+     * @return
+     */
+    @Override
+    public Long removeSet(String key, Object... values) {
+        return redisTemplate.opsForSet().remove(key,values);
     }
 }

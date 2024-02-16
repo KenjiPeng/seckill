@@ -54,4 +54,6 @@ public interface SeckillGoodsDomainService {
      * @return
      */
     Integer getAvailableStockByGoodsId(Long goodsId);
+
+    boolean increaseAvailableStock(Integer count, Long id);
 }

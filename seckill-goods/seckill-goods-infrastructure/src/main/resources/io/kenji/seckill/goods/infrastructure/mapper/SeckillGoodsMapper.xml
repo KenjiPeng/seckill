@@ -58,4 +58,10 @@
         from seckill.seckill_goods
         where id = #{goodsId}
     </select>
+
+    <update id="increaseAvailableStock">
+        update seckill.seckill_goods
+        set available_stock = available_stock + #{count}
+        where id = #{goodsId}
+    </update>
 </mapper>

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import io.kenji.seckill.common.event.publisher.EventPublisher;
 import io.kenji.seckill.common.exception.ErrorCode;
 import io.kenji.seckill.common.exception.SeckillException;
+import io.kenji.seckill.common.model.enums.SeckillOrderStatus;
 import io.kenji.seckill.order.domain.event.SeckillOrderEvent;
 import io.kenji.seckill.order.domain.model.entity.SeckillOrder;
 import io.kenji.seckill.order.domain.repository.SeckillOrderRepository;
@@ -11,6 +12,7 @@ import io.kenji.seckill.order.domain.service.SeckillOrderDomainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -45,12 +47,12 @@ public class SeckillOrderDomainServiceImpl implements SeckillOrderDomainService 
         }
 
         Integer saveCount = seckillOrderRepository.saveSeckillOrder(seckillOrder);
-        if (saveCount==1){
-            logger.info("saveSeckillOrder| create order success| {}",JSON.toJSONString(seckillOrder));
+        if (saveCount == 1) {
+            logger.info("saveSeckillOrder| create order success| {}", JSON.toJSONString(seckillOrder));
         }
         logger.info("Published seckill order: {}", JSON.toJSONString(seckillOrder));
 
-        SeckillOrderEvent seckillOrderEvent = new SeckillOrderEvent(seckillOrder.getId(),seckillOrder.getStatus());
+        SeckillOrderEvent seckillOrderEvent = new SeckillOrderEvent(seckillOrder.getId(), seckillOrder.getStatus());
         eventPublisher.publish(seckillOrderEvent);
         logger.info("Published seckill order event: {}", JSON.toJSONString(seckillOrder));
         return null;
@@ -72,5 +74,24 @@ public class SeckillOrderDomainServiceImpl implements SeckillOrderDomainService 
     @Override
     public List<SeckillOrder> getSeckillOrderByActivityId(Long activityId) {
         return seckillOrderRepository.getSeckillOrderByActivityId(activityId);
+    }
+
+    /**
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean deleteSeckillOrder(Long orderId) {
+        if (ObjectUtils.isEmpty(orderId)) {
+            throw new SeckillException(ErrorCode.PARAMS_INVALID);
+        }
+        boolean isDeleteSuccess = seckillOrderRepository.deleteSeckillOrder(orderId);
+        if (isDeleteSuccess) {
+            logger.info("Delete order success, orderId: {}", orderId);
+            SeckillOrderEvent seckillOrderEvent = new SeckillOrderEvent(orderId, SeckillOrderStatus.DELETED.getCode());
+            eventPublisher.publish(seckillOrderEvent);
+            logger.info("Published seckill order event: {}", JSON.toJSONString(seckillOrderEvent));
+        }
+        return isDeleteSuccess;
     }
 }

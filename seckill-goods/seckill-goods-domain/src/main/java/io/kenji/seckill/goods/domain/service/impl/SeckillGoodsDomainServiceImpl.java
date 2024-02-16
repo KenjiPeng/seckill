@@ -13,6 +13,7 @@ import io.kenji.seckill.goods.domain.service.SeckillGoodsDomainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -107,7 +108,7 @@ public class SeckillGoodsDomainServiceImpl implements SeckillGoodsDomainService 
         SeckillGoodsEvent seckillGoodsEvent = new SeckillGoodsEvent(goodsId, seckillGoods.getStatus(), seckillGoods.getActivityId());
         eventPublisher.publish(seckillGoodsEvent);
         logger.info("Published seckill goods event, id: {}", goodsId);
-        return updatedCount==1;
+        return updatedCount == 1;
     }
 
     /**
@@ -117,5 +118,32 @@ public class SeckillGoodsDomainServiceImpl implements SeckillGoodsDomainService 
     @Override
     public Integer getAvailableStockByGoodsId(Long goodsId) {
         return seckillGoodsRepository.getAvailableStockByGoodsId(goodsId);
+    }
+
+    /**
+     * @param count
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean increaseAvailableStock(Integer count, Long id) {
+        logger.info("Increase goods stock, goodsId: {}", id);
+        if (ObjectUtils.isEmpty(count) || count <= 0) {
+            throw new SeckillException(ErrorCode.PARAMS_INVALID);
+        }
+        SeckillGoods seckillGoods = seckillGoodsRepository.getSeckillGoodsByGoodsId(id);
+        if (ObjectUtils.isEmpty(seckillGoods)) {
+            throw new SeckillException(ErrorCode.GOODS_NOT_EXISTS);
+        }
+        boolean isUpdateSuccess = seckillGoodsRepository.increaseAvailableStock(count, id) > 0;
+        SeckillGoodsEvent seckillGoodsEvent = new SeckillGoodsEvent(id, seckillGoods.getStatus(), seckillGoods.getActivityId());
+        if (isUpdateSuccess) {
+            logger.info("Increased seckill goods available stock, count: {}, goods id: {}", count, id);
+            eventPublisher.publish(seckillGoodsEvent);
+            logger.info("Published seckill goods event, id: {}", id);
+        } else {
+            logger.info("Failed to increase goods available, goodsId: {}", id);
+        }
+        return isUpdateSuccess;
     }
 }

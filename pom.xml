@@ -34,9 +34,11 @@
         <jakarta.servlet>5.0.0</jakarta.servlet>
         <shiro.spring.version>1.11.0</shiro.spring.version>
         <jwt.version>4.4.0</jwt.version>
-        <jedis.version>4.3.2</jedis.version>
+<!--        <jedis.version>4.3.2</jedis.version>-->
         <redisson.version>3.16.3</redisson.version>
         <cola.version>3.0.0</cola.version>
+        <hmily.version>2.1.2</hmily.version>
+        <aspectj.version>1.9.2</aspectj.version>
     </properties>
 
 
@@ -63,6 +65,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
         <!-- security-->
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -74,11 +82,11 @@
             <artifactId>java-jwt</artifactId>
             <version>${jwt.version}</version>
         </dependency>
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>${jedis.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>redis.clients</groupId>-->
+<!--            <artifactId>jedis</artifactId>-->
+<!--            <version>${jedis.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>cola-core</artifactId>

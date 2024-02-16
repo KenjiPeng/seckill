@@ -33,4 +33,8 @@
     <select id="getSeckillOrderByActivityId" resultMap="baseResultMap">
         select * from seckill.seckill_order where activity_id = #{activityId}
     </select>
+
+    <delete id="deleteSeckillOrder">
+        delete from seckill.seckill_order where id = #{orderId}
+    </delete>
 </mapper>

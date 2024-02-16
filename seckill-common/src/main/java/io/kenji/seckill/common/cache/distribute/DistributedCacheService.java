@@ -34,5 +34,11 @@ public interface DistributedCacheService {
 
     default Long initByLua(String key,Integer quantity){return null;}
 
-    default void checkResult(Long result){}
+
+    Boolean isMemberSet(String key, Object o);
+
+    Long addSet(String key,Object... values);
+
+    Long removeSet(String key,Object... values);
+
 }

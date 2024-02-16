@@ -54,4 +54,6 @@ public interface SeckillGoodsRepository {
      * @return
      */
     Integer getAvailableStockByGoodsId(Long goodsId);
+
+    Integer increaseAvailableStock(Integer count, Long id);
 }

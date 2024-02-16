@@ -56,4 +56,12 @@ public interface SeckillGoodsMapper {
      * @return
      */
     Integer getAvailableStockByGoodsId(@Param("goodsId")Long goodsId);
+
+    /**
+     * Increase available stock
+     * @param count
+     * @param goodsId
+     * @return
+     */
+    Integer increaseAvailableStock(@Param("count")Integer count,@Param("goodsId") Long goodsId);
 }

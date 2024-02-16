@@ -34,4 +34,11 @@ public interface SeckillOrderMapper {
      * @return
      */
     List<SeckillOrder> getSeckillOrderByActivityId(@Param("activityId")Long activityId);
+
+    /**
+     * Delete order
+     * @param orderId
+     * @return
+     */
+    Integer deleteSeckillOrder(@Param("orderId") Long orderId);
 }

@@ -2,6 +2,8 @@ package io.kenji.seckill.order.application.place.impl;
 
 import io.kenji.seckill.common.cache.distribute.DistributedCacheService;
 import io.kenji.seckill.common.constants.SeckillConstants;
+import io.kenji.seckill.common.exception.ErrorCode;
+import io.kenji.seckill.common.exception.SeckillException;
 import io.kenji.seckill.common.model.dto.SeckillGoodsDTO;
 import io.kenji.seckill.common.model.dto.SeckillOrderDTO;
 import io.kenji.seckill.dubbo.interfaces.goods.SeckillGoodsDubboService;
@@ -22,11 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 @ConditionalOnProperty(name = "place.order.type", havingValue = "lua")
 @Service
-public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
+public class SeckillPlaceOrderLuaService extends SeckillPlaceOrderBaseService implements SeckillPlaceOrderService {
 
     private final Logger logger = LoggerFactory.getLogger(SeckillPlaceOrderLuaService.class);
 
-    @DubboReference(version = "1.0.0")
+    @DubboReference(version = "1.0.0",check = false)
     private SeckillGoodsDubboService seckillGoodsDubboService;
     private final DistributedCacheService distributedCacheService;
 
@@ -34,6 +36,7 @@ public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
 
 
     public SeckillPlaceOrderLuaService(DistributedCacheService distributedCacheService, SeckillOrderDomainService seckillOrderDomainService) {
+        super(distributedCacheService, seckillOrderDomainService);
         this.distributedCacheService = distributedCacheService;
         this.seckillOrderDomainService = seckillOrderDomainService;
     }
@@ -45,26 +48,62 @@ public class SeckillPlaceOrderLuaService implements SeckillPlaceOrderService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO) {
+    public Long placeOrder(Long userId, SeckillOrderDTO seckillOrderDTO, Long txNo) {
+        String txTryKey = SeckillConstants.getKey(SeckillConstants.ORDER_TRY_KEY_PREFIX, SeckillConstants.ORDER_KEY);
+        // Idempotent processing
+        if (distributedCacheService.isMemberSet(txTryKey, txNo)) {
+            logger.warn("updateAvailableStock | already invoked try method, txNo: {}", txNo);
+            return txNo;
+        }
+        // In case null rollback or suspend
+        if (distributedCacheService.isMemberSet(SeckillConstants.getKey(SeckillConstants.ORDER_CONFIRM_KEY_PREFIX, SeckillConstants.ORDER_KEY), txNo) ||
+                distributedCacheService.isMemberSet(SeckillConstants.getKey(SeckillConstants.ORDER_CANCEL_KEY_PREFIX, SeckillConstants.ORDER_KEY), txNo)) {
+            logger.warn("updateAvailableStock | already invoked confirm method or cancel method, txNo: {}", txNo);
+            return txNo;
+        }
         boolean decrementStock = false;
+        boolean isSaveTryLog = false;
         SeckillGoodsDTO seckillGoods = seckillGoodsDubboService.getSeckillGoods(seckillOrderDTO.getGoodsId(), seckillOrderDTO.getVersion());
         this.checkSeckillGoods(seckillOrderDTO, seckillGoods);
         String key = SeckillConstants.getKey(SeckillConstants.GOODS_ITEM_STOCK_KEY_PREFIX, String.valueOf(seckillOrderDTO.getGoodsId()));
         Long result = distributedCacheService.decrementByLua(key, seckillOrderDTO.getQuantity());
-        distributedCacheService.checkResult(result);
+        checkResult(result);
         try {
             SeckillOrder seckillOrder = this.buildSeckillOrder(userId, seckillOrderDTO, seckillGoods);
+            seckillOrder.setId(txNo);
             seckillOrderDomainService.saveSeckillOrder(seckillOrder);
-            seckillGoodsDubboService.updateAvailableStock(seckillOrder.getQuantity(), seckillOrderDTO.getGoodsId());
+            distributedCacheService.addSet(txTryKey, txNo);
+            isSaveTryLog = true;
+            seckillGoodsDubboService.updateAvailableStock(seckillOrder.getQuantity(), seckillOrderDTO.getGoodsId(), txNo);
             decrementStock = true;
-            int i = 1 / 0;
             return seckillOrder.getId();
         } catch (Exception e) {
             logger.error("Hit exception whilst place order, roll back", e);
             if (decrementStock) {
                 distributedCacheService.incrementByLua(key, seckillOrderDTO.getQuantity());
             }
-            throw e;
+            if (isSaveTryLog) {
+                distributedCacheService.removeSet(txTryKey, txNo);
+            }
+            if (e instanceof SeckillException) {
+                logger.error("Hit exception whist order", e);
+                throw e;
+            } else {
+                logger.error("Failed to order", e);
+                throw new SeckillException(ErrorCode.ORDER_FAILED);
+            }
+        }
+    }
+
+    public void checkResult(Long result) {
+        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_NOT_EXISTS) {
+            throw new SeckillException(ErrorCode.STOCK_IS_NULL);
+        }
+        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_PARAMS_LT_ZERO) {
+            throw new SeckillException(ErrorCode.PARAMS_INVALID);
+        }
+        if (result == SeckillConstants.LUA_RESULT_GOODS_STOCK_LT_ZERO) {
+            throw new SeckillException(ErrorCode.STOCK_LT_ZERO);
         }
     }
 }

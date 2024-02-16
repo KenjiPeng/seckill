@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @PropertySource(value = {"classpath:properties/jdbc.properties", "classpath:properties/mybatis.properties"})
 @Import({JdbcConfig.class, MyBatisConfig.class, RedisConfig.class})
 @EnableTransactionManagement(proxyTargetClass = true)
+@EnableAspectJAutoProxy(exposeProxy = true)
 public class TransactionConfig {
     @Bean
     public TransactionManager transactionManager(DruidDataSource dataSource) {
